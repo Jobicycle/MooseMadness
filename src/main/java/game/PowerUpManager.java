@@ -2,7 +2,10 @@ package game;
 
 public class PowerUpManager {
 
-    public void spawnPowerups() {
+    private Stage stage;
 
+    public PowerUpManager(Stage stage) {
+        this.stage = stage;
     }
+
 }

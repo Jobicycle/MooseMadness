@@ -30,20 +30,25 @@ public class GamePanels extends Stage {
         g.drawString("Speed: " + player.getSpeed(), 20, 40);
     }
 
-    public void gameOver() {
-        Graphics g = strategy.getDrawGraphics();
-        g.setColor(getBackground());
-        g.fillRect(0, 0, getWidth(), getHeight());
+    public void printHealth() {
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setColor(Color.green);
+        g.drawString("Health: " + player.getHealth(), 20, 60);
+    }
 
-        //about 310 pixels wide
+    public void printGameOver() {
+        //color entire game panel black
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWIDTH(), getHEIGHT());
+
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.setColor(Color.RED);
-        int xPos = getWidth() / 2 - 155;
-        g.drawString("GAME OVER", (xPos < 0 ? 0 : xPos), getHeight() / 2);
+        int xPos = getHEIGHT() / 2 - 190;
+        g.drawString("GAME OVER", (xPos < 0 ? 0 : xPos), getHEIGHT() / 2);
 
         xPos += 30;
         g.setFont(new Font("Arial", Font.BOLD, 30));
-        g.drawString("ENTER: try again", (xPos < 0 ? 0 : xPos), getHeight() / 2 + 50);
+        g.drawString("ENTER: try again", (xPos < 0 ? 0 : xPos), getHEIGHT() / 2 + 50);
 
         strategy.show();
     }

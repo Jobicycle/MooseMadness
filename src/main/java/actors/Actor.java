@@ -65,11 +65,11 @@ public class Actor {
         this.posY = posY;
     }
 
-    public int getX() {
+    public int getPosX() {
         return posX;
     }
 
-    public int getY() {
+    public int getPosY() {
         return posY;
     }
 

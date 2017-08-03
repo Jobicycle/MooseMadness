@@ -10,13 +10,14 @@ import java.util.List;
 public class Stage extends Canvas implements ImageObserver {
 
     private static final long serialVersionUID = 1L;
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
+    public static final int WIDTH = 550;
+    public static final int HEIGHT = 640;
     public static final int DESIRED_FPS = 60;
 
     protected boolean gameOver = false;
-//    public List<Actor> actors = new ArrayList<Actor>();
+
     public List<Actor> obstacles = new ArrayList<Actor>();
+    public List<Actor> motorists = new ArrayList<Actor>();
     public List<Actor> powerups = new ArrayList<Actor>();
 
     public Stage() {
@@ -37,7 +38,18 @@ public class Stage extends Canvas implements ImageObserver {
     public void initWorld() {
     }
 
-    public void game() {
+    public void gameLoop() {}
 
+    public void game() {
     }
+
+    public static int getWIDTH() {
+        return WIDTH;
+    }
+
+    public static int getHEIGHT() {
+        return HEIGHT;
+    }
+
+
 }

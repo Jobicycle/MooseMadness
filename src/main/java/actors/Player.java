@@ -1,15 +1,26 @@
 package actors;
 
+import actors.Obstacles.Moose;
+import game.ResourceLoader;
 import game.Stage;
 import game.Utils;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Player extends Actor implements KeyboardControllable {
 
-    private boolean up, down, left, right, eBreak;
-    private int score = 0;
+    private boolean up, down, left, right, eBrake;
+    private int health = 100;
     private int speed = 0;
+    private int score = 0;
+
+    //handling specs
+    private int maxSpeed = 100;
+    private int steeringResponsiveness = 1;
+    private int maxSteerSpeed = 20;
+    private int steerCollisionDampener = 2;
+    private int eBrakePower = 3;
 
     public Player(Stage stage) {
         super(stage);
@@ -21,7 +32,15 @@ public class Player extends Actor implements KeyboardControllable {
         width = 66;
         height = 128;
         posX = Stage.WIDTH / 2 - width / 2;
-        posY = Stage.HEIGHT / 2 - height / 2;
+        posY = Stage.HEIGHT - height * 2;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
     }
 
     public int getSpeed() {
@@ -34,16 +53,12 @@ public class Player extends Actor implements KeyboardControllable {
     }
 
     protected void updateSpeed() {
-        int steerVelocity = 1;
-        int maxSteerVelocity = 50;
-        int maxSpeed = 120;
-        int steerDampener = 2;
-
+        //player hit corners of road, rebound and reduce steering velocity
         if (posX <= 0) {
-            vx = -vx / steerDampener;
+            vx = -vx / steerCollisionDampener;
             posX = (int) (width * Utils.randDouble(0, 0.1));
         } else if (posX + width >= Stage.WIDTH) {
-            vx = -vx / steerDampener;
+            vx = -vx / steerCollisionDampener;
             posX = (int) (Stage.WIDTH - width * Utils.randDouble(1, 1.1));
         }
 
@@ -54,17 +69,17 @@ public class Player extends Actor implements KeyboardControllable {
             speed--;
         }
         if (left) {
-            vx -= steerVelocity;
+            vx -= steeringResponsiveness;
         }
         if (right) {
-            vx += steerVelocity;
+            vx += steeringResponsiveness;
         }
-        if (eBreak) {
-            speed -= 2;
-            vx *= 0.99;
+        if (eBrake) {
+            speed -= eBrakePower;
+            vx *= 0.90;
         }
 
-        //if not steering
+        //if not steering, reduce xVelocity
         if (!left && !right) {
             vx *= 0.9999999;
         }
@@ -77,10 +92,10 @@ public class Player extends Actor implements KeyboardControllable {
         }
 
         //limit steering velocity
-        if (vx > maxSteerVelocity) {
-            vx = maxSteerVelocity;
-        } else if (vx < -maxSteerVelocity) {
-            vx = -maxSteerVelocity;
+        if (vx > maxSteerSpeed) {
+            vx = maxSteerSpeed;
+        } else if (vx < -maxSteerSpeed) {
+            vx = -maxSteerSpeed;
         }
 
         //don't allow scrolling off the edge of the screen
@@ -105,26 +120,31 @@ public class Player extends Actor implements KeyboardControllable {
             case KeyEvent.VK_UP:
                 up = true;
                 down = false;
-                eBreak = false;
+                eBrake = false;
                 break;
+
             case KeyEvent.VK_DOWN:
                 down = true;
                 up = false;
                 break;
+
             case KeyEvent.VK_LEFT:
                 left = true;
                 right = false;
                 break;
+
             case KeyEvent.VK_RIGHT:
                 right = true;
                 left = false;
                 break;
-            //TODO powerup projectile logic
+
             case KeyEvent.VK_SPACE:
-                eBreak = true;
-                up = false;
-                right = false;
-                left = false;
+                if (!eBrake) {
+                    eBrake = true;
+//                    up = false;
+//                    right = false;
+//                    left = false;
+                }
                 break;
         }
     }
@@ -144,13 +164,18 @@ public class Player extends Actor implements KeyboardControllable {
                 right = false;
                 break;
             case KeyEvent.VK_SPACE:
-                eBreak = false;
+                eBrake = false;
                 break;
         }
     }
 
     public void collision(Actor a) {
-        stage.endGame();
+        //if player hits a moose, reduce health and speed
+        if (a instanceof Moose && !((Moose) a).isHit()) {
+            health -= ((Moose) a).getDamageValue();
+            speed -= ((Moose) a).getWeight();
+        }
+//        stage.endGame();
     }
 
     //TODO tune to projectile
@@ -168,5 +193,9 @@ public class Player extends Actor implements KeyboardControllable {
 
     public int getScore() {
         return score;
+    }
+
+    public boolean iseBrake() {
+        return eBrake;
     }
 }
