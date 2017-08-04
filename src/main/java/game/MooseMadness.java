@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MooseMadness extends Stage implements KeyListener {
 
@@ -66,6 +67,7 @@ public class MooseMadness extends Stage implements KeyListener {
         createBufferStrategy(2);
         strategy = getBufferStrategy();
         requestFocus();
+//        initMainMenu();
         initWorld();
     }
 
@@ -82,7 +84,7 @@ public class MooseMadness extends Stage implements KeyListener {
         motorists = new ArrayList<Actor>();
 
         //add player and input handlers
-        player = new Player(this);
+        player = new Player(100, 3, 2, this);
 //        keyPressedHandler = new InputHandler(this, player);
 //        keyPressedHandler.action = InputHandler.Action.PRESS;
 //        keyReleasedHandler = new InputHandler(this, player);
@@ -97,6 +99,7 @@ public class MooseMadness extends Stage implements KeyListener {
         g.setPaint(new TexturePaint(backgroundTile, new Rectangle(0, 0, backgroundTile.getWidth(), backgroundTile.getHeight())));
         g.fillRect(0, 0, background.getWidth(), background.getHeight());
         backgroundY = backgroundTile.getHeight();
+        gameLoop();
     }
 
 
@@ -128,20 +131,8 @@ public class MooseMadness extends Stage implements KeyListener {
      */
     public void updateWorld() {
         //iterate through current obstacle list, check for collisions, remove unnecessary obstacles, update obstacle position based on player speed.
-        int i = 0;
-        while (i < obstacles.size()) {
-            Actor obstacle = obstacles.get(i);
-            checkCollision(obstacle);
-
-            if (obstacle.isMarkedForRemoval()) {
-                player.updateScore(obstacle.getPointValue());
-                obstacles.remove(i);
-            } else {
-                obstacle.setPosY(obstacle.getPosY() + player.getSpeed() / 10);
-                obstacle.update();
-                i++;
-            }
-        }
+        updateActors(obstacles);
+        updateActors(motorists);
 
         //if game over
         if (player.getHealth() <= 0) {
@@ -149,11 +140,37 @@ public class MooseMadness extends Stage implements KeyListener {
         }
 
         //check for player collisions
-        checkCollision(player);
+        checkCollision(player, obstacles);
+        checkCollision(player, motorists);
         player.update();
 
+        //check motorists collisions
+        for(Actor motorist: motorists) {
+            checkCollision(motorist, obstacles);
+            checkCollision(motorist, motorists);
+        }
+
         //ask managers if objects should be added to lists
-        obstacleManager.randomMoose(obstacles);
+//        obstacleManager.randomMoose(obstacles);
+        trafficManager.randomMotorist(motorists);
+    }
+
+
+    private void updateActors(List<Actor> actorList) {
+        int i = 0;
+        while (i < actorList.size()) {
+            Actor actor = actorList.get(i);
+            checkCollision(actor, actorList);
+
+            if (actor.isMarkedForRemoval()) {
+                player.updateScore(actor.getPointValue());
+                actorList.remove(i);
+            } else {
+                actor.setPosY(actor.getPosY() + player.getSpeed() / 10);
+                actor.update();
+                i++;
+            }
+        }
     }
 
 
@@ -174,6 +191,11 @@ public class MooseMadness extends Stage implements KeyListener {
         //paint the obstacles
         for (Actor obstacle : obstacles) {
             obstacle.paint(g);
+        }
+
+        //paint the motorists
+        for (Actor motorist : motorists) {
+            motorist.paint(g);
         }
 
         player.paint(g);
@@ -200,11 +222,11 @@ public class MooseMadness extends Stage implements KeyListener {
      *
      * @param actor
      */
-    private void checkCollision(Actor actor) {
+    private void checkCollision(Actor actor, List<Actor> otherActorList) {
         Rectangle actorBounds = actor.getBounds();
 
-        for (int i = 0; i < obstacles.size(); i++) {
-            Actor otherActor = obstacles.get(i);
+        for (int i = 0; i < otherActorList.size(); i++) {
+            Actor otherActor = otherActorList.get(i);
 
             if (otherActor == null || actor.equals(otherActor)) {
                 continue;

@@ -10,7 +10,7 @@ import java.util.List;
 public class Stage extends Canvas implements ImageObserver {
 
     private static final long serialVersionUID = 1L;
-    public static final int WIDTH = 550;
+    public static final int WIDTH = 700;
     public static final int HEIGHT = 640;
     public static final int DESIRED_FPS = 60;
 

@@ -16,7 +16,7 @@ public class Moose extends Actor {
     public Moose(Stage stage) {
         super(stage);
         sprites = new String[]{"moose0.png"};
-        frameSpeed = 100;
+        frameSpeed = 1;
         width = 60;
         height = 60;
     }
@@ -35,7 +35,6 @@ public class Moose extends Actor {
      *
      */
     private void updateSpeed() {
-        //moose movement logic here
         posX += getVx();
         posY += getVy();
 
@@ -53,6 +52,13 @@ public class Moose extends Actor {
             if (!hit) {
                 hit = true;
                 pointValue = 0;
+                sprites = new String[]{"blood.png"};
+            }
+        }
+
+        if (a instanceof Motorist) {
+            if (!hit) {
+                hit = true;
                 sprites = new String[]{"blood.png"};
             }
         }

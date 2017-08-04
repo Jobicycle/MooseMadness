@@ -16,15 +16,15 @@ public class ObstacleManager {
         if (Utils.randInt(0, 1000) >= 990) {
             Actor moose = new Moose(stage);
             moose.setPosX(Utils.randInt(0 - moose.getWidth(), stage.getWidth()) + moose.getWidth());
-            moose.setPosY(-60);
+            moose.setPosY(-moose.getHeight());
 
             if (moose.getPosX() + moose.getWidth() / 2 > stage.getWidth() / 2) {
-                moose.setVx(Utils.randInt(-5, 0));
+                moose.setVx(Utils.randInt(-5, -1));
             } else {
-                moose.setVx(Utils.randInt(0, 5));
+                moose.setVx(Utils.randInt(1, 5));
             }
 
-            moose.setVy(Utils.randInt(-1, 1));
+            moose.setVy(Utils.randInt(-2, 2));
             obstacles.add(moose);
         }
     }

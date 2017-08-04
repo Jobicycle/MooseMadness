@@ -1,6 +1,7 @@
 package actors;
 
 import actors.Obstacles.Moose;
+import actors.Obstacles.Motorist;
 import game.ResourceLoader;
 import game.Stage;
 import game.Utils;
@@ -16,23 +17,30 @@ public class Player extends Actor implements KeyboardControllable {
     private int score = 0;
 
     //handling specs
-    private int maxSpeed = 100;
-    private int steeringResponsiveness = 1;
-    private int maxSteerSpeed = 20;
+    private int maxSpeed;
+    private int weight;
+    private int steeringResponsiveness;
+    private int maxSteerSpeed;
+    private int eBrakePower;
     private int steerCollisionDampener = 2;
-    private int eBrakePower = 3;
 
-    public Player(Stage stage) {
+    public Player(int maxSpeed, int weight, int steering, Stage stage) {
         super(stage);
 
-        sprites = new String[]{"player.png"};
+        sprites = new String[]{"motorist0.png"};
         frame = 0;
         frameSpeed = 35;
         actorSpeed = 10;
-        width = 66;
-        height = 128;
+        width = 65;
+        height = 146;
         posX = Stage.WIDTH / 2 - width / 2;
-        posY = Stage.HEIGHT - height * 2;
+        posY = (int) (Stage.HEIGHT * 0.50);
+
+        this.maxSpeed = maxSpeed;
+        this.weight = weight;
+        this.steeringResponsiveness = steering;
+        this.maxSteerSpeed = steering * 10;
+        this.eBrakePower = 5 - weight;
     }
 
     public int getHealth() {
@@ -63,10 +71,14 @@ public class Player extends Actor implements KeyboardControllable {
         }
 
         if (up) {
-            speed++;
+            if (speed < maxSpeed) {
+                speed++;
+            }
         }
         if (down) {
-            speed--;
+            if (speed > 0) {
+                speed--;
+            }
         }
         if (left) {
             vx -= steeringResponsiveness;
@@ -84,13 +96,6 @@ public class Player extends Actor implements KeyboardControllable {
             vx *= 0.9999999;
         }
 
-        //limit max speed
-        if (speed > maxSpeed) {
-            speed = maxSpeed;
-        } else if (speed < 0) {
-            speed = 0;
-        }
-
         //limit steering velocity
         if (vx > maxSteerSpeed) {
             vx = maxSteerSpeed;
@@ -99,19 +104,15 @@ public class Player extends Actor implements KeyboardControllable {
         }
 
         //don't allow scrolling off the edge of the screen
-        if (speed != 0) {
+        if (speed >= 10) {
             if (posX > 0 && vx < 0) {
                 posX += vx / 4;
             } else if (posX + width < Stage.WIDTH && vx > 0) {
                 posX += vx / 4;
             }
-
-            if (posY - height > 0 && vy < 0) {
-                posY += vy;
-            } else if (posY + height + (height / 2) < Stage.HEIGHT && vy > 0) {
-                posY += vy;
-            }
         }
+
+        vy = speed / 10;
     }
 
 
@@ -175,6 +176,15 @@ public class Player extends Actor implements KeyboardControllable {
             health -= ((Moose) a).getDamageValue();
             speed -= ((Moose) a).getWeight();
         }
+
+        //if player hits a motorist
+        if (a instanceof Motorist) {
+            if (this.getPosY() < a.getPosY()) { //if motorist behind me
+
+            } else { //if motorist in front of me
+
+            }
+        }
 //        stage.endGame();
     }
 
@@ -197,5 +207,9 @@ public class Player extends Actor implements KeyboardControllable {
 
     public boolean iseBrake() {
         return eBrake;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 }
