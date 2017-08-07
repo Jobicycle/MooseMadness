@@ -9,8 +9,8 @@ import java.awt.*;
 public class Actor {
 
     private static final int POINT_VALUE = 0;
-    protected int vx;
-    protected int vy;
+    protected float vx;
+    protected float vy;
     protected int posX;
     protected int posY;
     protected int height;
@@ -19,9 +19,9 @@ public class Actor {
     protected int frameSpeed;
     protected int actorSpeed;
     protected int time;
-    private boolean markedForRemoval = false;
     protected String[] sprites = null;
     protected Stage stage = null;
+    private boolean markedForRemoval = false;
 
     public Actor(Stage canvas) {
         this.stage = canvas;
@@ -57,52 +57,52 @@ public class Actor {
         g.drawImage(ResourceLoader.getInstance().getSprite(sprites[frame]), posX, posY, stage);
     }
 
-    public void setPosX(int posX) {
-        this.posX = posX;
-    }
-
-    public void setPosY(int posY) {
-        this.posY = posY;
-    }
-
     public int getPosX() {
         return posX;
+    }
+
+    public void setPosX(int posX) {
+        this.posX = posX;
     }
 
     public int getPosY() {
         return posY;
     }
 
-    protected void setWidth(int width) {
-        this.width = width;
+    public void setPosY(int posY) {
+        this.posY = posY;
     }
 
     public int getWidth() {
         return width;
     }
 
-    protected void setHeight(int height) {
-        this.height = height;
+    protected void setWidth(int width) {
+        this.width = width;
     }
 
     public int getHeight() {
         return height;
     }
 
-    public void setVx(int vx) {
-        this.vx = vx;
+    protected void setHeight(int height) {
+        this.height = height;
     }
 
-    public int getVx() {
+    public float getVx() {
         return vx;
     }
 
-    public void setVy(int vy) {
-        this.vy = vy;
+    public void setVx(float vx) {
+        this.vx = vx;
     }
 
-    public int getVy() {
+    public float getVy() {
         return vy;
+    }
+
+    public void setVy(float vy) {
+        this.vy = vy;
     }
 
     public Rectangle getBounds() {
@@ -112,12 +112,12 @@ public class Actor {
     public void collision(Actor a) {
     }
 
-    public void setMarkedForRemoval(boolean markedForRemoval) {
-        this.markedForRemoval = markedForRemoval;
-    }
-
     public boolean isMarkedForRemoval() {
         return markedForRemoval;
+    }
+
+    public void setMarkedForRemoval(boolean markedForRemoval) {
+        this.markedForRemoval = markedForRemoval;
     }
 
     public int getPointValue() {

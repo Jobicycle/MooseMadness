@@ -7,7 +7,7 @@ import game.Stage;
 public class Moose extends Actor {
     private int pointValue = 50; // point value if moose is not hit by player (clears screen)
     private int damageValue = 5; //how much damage is done
-    private int weight = 40; //weight determines how much speed is reduce when the moose is hit
+    private float weight = 2f; //weight determines how much speed is reduce when the moose is hit
     private boolean hit = false;
 
     /**
@@ -35,8 +35,8 @@ public class Moose extends Actor {
      *
      */
     private void updateSpeed() {
-        posX += getVx();
-        posY += getVy();
+        posX += vx;
+        posY += vy;
 
         if (posX > stage.getWidth() || posY > stage.getHeight()) {
             setMarkedForRemoval(true);
@@ -109,14 +109,14 @@ public class Moose extends Actor {
     /**
      * @return
      */
-    public int getWeight() {
+    public float getWeight() {
         return weight;
     }
 
     /**
      * @param weight
      */
-    public void setWeight(int weight) {
+    public void setWeight(float weight) {
         this.weight = weight;
     }
 }

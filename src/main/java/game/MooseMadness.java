@@ -1,6 +1,7 @@
 package game;
 
-import actors.*;
+import actors.Actor;
+import actors.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,23 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MooseMadness extends Stage implements KeyListener {
-
-    private static final long serialVersionUID = 1L;
-    public long usedTime;   //time taken per gameLoop step
-    public BufferStrategy strategy;     //double buffering strategy
-
-    private Player player;
-    private GamePanels gamePanels;
-
-    private PowerUpManager powerUpManager;
-    private ObstacleManager obstacleManager;
-    private TrafficManager trafficManager;
-
-//    private InputHandler keyPressedHandler;
-//    private InputHandler keyReleasedHandler;
+    public GameState state = GameState.MENU;
+    public long usedTime; //time taken per gameLoop step
+    public BufferStrategy strategy; //double buffering strategy
+    public List<Actor> obstacles;
+    public List<Actor> motorists;
+    public List<Actor> powerups;
 
     private BufferedImage background, backgroundTile; //background cache
     private int backgroundY; //background cache position
+    private GamePanels gamePanels;
+    private Player player;
+    private PowerUpManager powerUpManager;
+    private ObstacleManager obstacleManager;
+    private TrafficManager trafficManager;
 
     /**
      *
@@ -63,12 +61,9 @@ public class MooseMadness extends Stage implements KeyListener {
 
         addKeyListener(this);
 
-        //create a double buffer
-        createBufferStrategy(2);
+        createBufferStrategy(2); //create a double buffer
         strategy = getBufferStrategy();
         requestFocus();
-//        initMainMenu();
-        initWorld();
     }
 
     /**
@@ -76,21 +71,13 @@ public class MooseMadness extends Stage implements KeyListener {
      */
     public void initWorld() {
         //add powerup, obstacle, and traffic managers and lists
-        powerUpManager = new PowerUpManager(this);
-        powerups = new ArrayList<Actor>();
-        obstacleManager = new ObstacleManager(this);
         obstacles = new ArrayList<Actor>();
-        trafficManager = new TrafficManager(this);
         motorists = new ArrayList<Actor>();
-
-        //add player and input handlers
-        player = new Player(100, 3, 2, this);
-//        keyPressedHandler = new InputHandler(this, player);
-//        keyPressedHandler.action = InputHandler.Action.PRESS;
-//        keyReleasedHandler = new InputHandler(this, player);
-//        keyReleasedHandler.action = InputHandler.Action.RELEASE;
-
-        gameOver = false;
+        powerups = new ArrayList<Actor>();
+        trafficManager = new TrafficManager(this, motorists);
+        obstacleManager = new ObstacleManager(this);
+        powerUpManager = new PowerUpManager(this);
+        player = new Player(this); //add player
 
         //load background
         backgroundTile = ResourceLoader.getInstance().getSprite("road0.gif");
@@ -99,89 +86,104 @@ public class MooseMadness extends Stage implements KeyListener {
         g.setPaint(new TexturePaint(backgroundTile, new Rectangle(0, 0, backgroundTile.getWidth(), backgroundTile.getHeight())));
         g.fillRect(0, 0, background.getWidth(), background.getHeight());
         backgroundY = backgroundTile.getHeight();
-        gameLoop();
     }
-
 
     /**
      * main game loop
      */
-    public void gameLoop() {
-//        loopMusic("music.wav");
-        usedTime = 0;
+    public void game() {
+        Graphics g = strategy.getDrawGraphics();
+        gamePanels = new GamePanels(player, g, strategy);
 
-        while (isVisible()) {
-            if (super.gameOver) {
+        switch (state) {
+            case MENU:
+                gamePanels.printMainMenu();
+                break;
+
+            case OPTIONS:
+//                gamePanels.printOptions();
+                break;
+
+            case HIGHSCORES:
+//                gamePanels.printHighScores();
+                break;
+
+            case PAUSE:
+                gamePanels.printPause();
+                break;
+
+            case GAMEOVER:
                 gamePanels.printGameOver();
                 break;
-            }
 
-            updateWorld();
-            paintWorld();
-            calculateSleepTime();
+            case GAME:
+                usedTime = 0;
+                gameLoop:
+                while (isVisible()) {
+                    gameUpdate();
+                    paintWorld(g);
+                    Utils.calculateSleepTime(usedTime, DESIRED_FPS);
+
+                    if (state == GameState.GAMEOVER) {
+                        game();
+                        break gameLoop;
+                    } else if (state == GameState.PAUSE) {
+                        game();
+                        break gameLoop;
+                    }
+                }
+                break;
         }
     }
 
-//    public void paint(Graphics g) {
-//    }
-
-
-    /**
-     *
-     */
-    public void updateWorld() {
+    private void gameUpdate() {
         //iterate through current obstacle list, check for collisions, remove unnecessary obstacles, update obstacle position based on player speed.
         updateActors(obstacles);
         updateActors(motorists);
 
-        //if game over
-        if (player.getHealth() <= 0) {
-            super.gameOver = true;
-        }
-
-        //check for player collisions
-        checkCollision(player, obstacles);
-        checkCollision(player, motorists);
+        //check for player collisions between obstacles, motorists, and powerups
+        Utils.checkCollision(player, obstacles);
+        Utils.checkCollision(player, motorists);
         player.update();
 
-        //check motorists collisions
-        for(Actor motorist: motorists) {
-            checkCollision(motorist, obstacles);
-            checkCollision(motorist, motorists);
+        for (Actor motorist : motorists) { //check motorists collisions
+            Utils.checkCollision(motorist, obstacles);
+//            Utils.checkCollision(motorist, motorists);
         }
 
-        //ask managers if objects should be added to lists
+        //ask managers if objects should be added to object lists
 //        obstacleManager.randomMoose(obstacles);
-        trafficManager.randomMotorist(motorists);
+        trafficManager.randomMotorist();
+
+        if (player.getHealth() <= 0) { //if game over
+            state = GameState.GAMEOVER;
+        }
     }
 
-
+    /**
+     * @param actorList
+     */
     private void updateActors(List<Actor> actorList) {
         int i = 0;
         while (i < actorList.size()) {
             Actor actor = actorList.get(i);
-            checkCollision(actor, actorList);
+            Utils.checkCollision(actor, actorList);
 
             if (actor.isMarkedForRemoval()) {
                 player.updateScore(actor.getPointValue());
                 actorList.remove(i);
             } else {
-                actor.setPosY(actor.getPosY() + player.getSpeed() / 10);
+                actor.setPosY(actor.getPosY() + (int) player.getSpeed());
                 actor.update();
                 i++;
             }
         }
     }
 
-
     /**
      *
      */
-    public void paintWorld() {
-        //get the graphics from the buffer
-        Graphics g = strategy.getDrawGraphics();
-        gamePanels = new GamePanels(player, g, strategy);
-
+    public void paintWorld(Graphics g) {
         //init image to background
         g.setColor(getBackground());
         g.fillRect(0, 0, getWidth(), getHeight());
@@ -198,13 +200,10 @@ public class MooseMadness extends Stage implements KeyListener {
             motorist.paint(g);
         }
 
+        //paint the player
         player.paint(g);
 
-//        if (player.iseBrake()) {
-//            g.drawImage(ResourceLoader.getInstance().getSprite("skidmarks.png"), player.getPosX(), player.getPosY(), this);
-//        }
-
-        backgroundY -= player.getSpeed() / 10;
+        backgroundY -= (int) player.getSpeed();
         if (backgroundY < 0) {
             backgroundY = backgroundTile.getHeight();
         }
@@ -217,66 +216,7 @@ public class MooseMadness extends Stage implements KeyListener {
         strategy.show();
     }
 
-
     /**
-     *
-     * @param actor
-     */
-    private void checkCollision(Actor actor, List<Actor> otherActorList) {
-        Rectangle actorBounds = actor.getBounds();
-
-        for (int i = 0; i < otherActorList.size(); i++) {
-            Actor otherActor = otherActorList.get(i);
-
-            if (otherActor == null || actor.equals(otherActor)) {
-                continue;
-            }
-
-            if (actorBounds.intersects(otherActor.getBounds())) {
-                actor.collision(otherActor);
-                otherActor.collision(actor);
-            }
-        }
-    }
-
-    /**
-     *
-     * @param name
-     */
-    public void loopMusic(final String name) {
-        new Thread(new Runnable() {
-            public void run() {
-                ResourceLoader.getInstance().getSound(name).loop();
-            }
-        }).start();
-    }
-
-
-    /**
-     * keep the gameLoop running at a desired fps
-     */
-    public void calculateSleepTime() {
-        long startTime = System.currentTimeMillis();
-        usedTime = System.currentTimeMillis() - startTime;
-
-        //calculate sleep time
-        if (usedTime == 0) {
-            usedTime = 1;
-        }
-
-        int timeDiff = (int) ((1000 / usedTime) - DESIRED_FPS);
-
-        if (timeDiff > 0) {
-            try {
-                Thread.sleep(timeDiff / 100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     *
      * @param e
      */
     public void keyPressed(KeyEvent e) {
@@ -284,23 +224,19 @@ public class MooseMadness extends Stage implements KeyListener {
         inputHandler.event = e;
         inputHandler.action = InputHandler.Action.PRESS;
         inputHandler.start();
-//        keyPressedHandler.handleInput(e);
     }
 
     /**
-     *
      * @param e
      */
     public void keyReleased(KeyEvent e) {
         InputHandler inputHandler = new InputHandler(this, player);
         inputHandler.event = e;
-        inputHandler.action = InputHandler.Action.RELSEASE;
+        inputHandler.action = InputHandler.Action.RELEASE;
         inputHandler.start();
-//        keyReleasedHandler.handleInput(e);
     }
 
     /**
-     *
      * @param e
      */
     public void keyTyped(KeyEvent e) {

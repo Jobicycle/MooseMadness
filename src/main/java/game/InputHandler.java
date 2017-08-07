@@ -12,10 +12,10 @@ import java.awt.event.KeyEvent;
 
 public class InputHandler extends Thread {
 
-    private MooseMadness mooseMadness = null;
-    private Player player  = null;
     public Action action;
     public KeyEvent event;
+    private MooseMadness mooseMadness = null;
+    private Player player = null;
 
     public InputHandler(MooseMadness mooseMadness, Player player) {
         this.mooseMadness = mooseMadness;
@@ -24,53 +24,51 @@ public class InputHandler extends Thread {
 
     public void run() {
         if (action == Action.PRESS) {
-            if (KeyEvent.VK_ENTER == event.getKeyCode()) {
-                if (mooseMadness.gameOver) {
+            int keyPressed = event.getKeyCode();
+
+            if (mooseMadness.state == Stage.GameState.GAMEOVER) { // if in gameover
+                if (KeyEvent.VK_ENTER == keyPressed) { // if enter start new game
+                    mooseMadness.state = Stage.GameState.GAME;
                     mooseMadness.initWorld();
-                    mooseMadness.gameLoop();
+                    mooseMadness.game();
+                } else if (KeyEvent.VK_ESCAPE == keyPressed) { //if escape key go to menu
+                    mooseMadness.state = Stage.GameState.MENU;
+                    mooseMadness.game();
+                }
+
+            } else if (mooseMadness.state == Stage.GameState.MENU) { // if in menu
+                if (KeyEvent.VK_ENTER == keyPressed) { // if enter key pressed start new game
+                    mooseMadness.state = Stage.GameState.GAME;
+                    mooseMadness.initWorld();
+                    mooseMadness.game();
+                } else if (KeyEvent.VK_ESCAPE == keyPressed) { //if escape key quit program
+                    System.exit(0);
+                }
+
+
+            } else if (mooseMadness.state == Stage.GameState.OPTIONS) { // if in options
+
+            } else if (mooseMadness.state == Stage.GameState.HIGHSCORES) { // if in highscores
+
+            } else if (mooseMadness.state == Stage.GameState.PAUSE) { // if in pause
+                if (KeyEvent.VK_ESCAPE == keyPressed) {
+                    mooseMadness.state = Stage.GameState.GAME;
+                    mooseMadness.game();
+                }
+
+            } else {
+                if (KeyEvent.VK_ESCAPE == keyPressed) {
+                    mooseMadness.state = Stage.GameState.PAUSE;
+                } else {
+                    player.triggerKeyPress(event);
                 }
             }
-
-            else
-                player.triggerKeyPress(event);
-        }
-        else if (action == Action.RELSEASE)
+        } else if (action == Action.RELEASE) {
             player.triggerKeyRelease(event);
+        }
     }
 
     public enum Action {
-        PRESS,
-        RELSEASE
+        PRESS, RELEASE
     }
 }
-
-//public class InputHandler {
-//    public Action action;
-//    private Stage stage = null;
-//    private KeyboardControllable player = null;
-//
-//    public InputHandler(Stage stage, KeyboardControllable player) {
-//        this.stage = stage;
-//        this.player = player;
-//    }
-//
-//    public void handleInput(KeyEvent e) {
-//        if (action == Action.PRESS) {
-//            if (e.getKeyCode() == KeyEvent.VK_ENTER) { //if enter key pressed
-//                if (stage.isGameOver()) { //if in game over screen
-//                    stage.initWorld();
-//                    stage.gameLoop();
-//                }
-//
-//            } else {
-//                player.triggerKeyPress(e);
-//            }
-//        } else if (action == Action.RELEASE) {
-//            player.triggerKeyRelease(e);
-//        }
-//    }
-//
-//    public enum Action {
-//        PRESS, RELEASE
-//    }
-//}

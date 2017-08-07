@@ -27,7 +27,7 @@ public class GamePanels extends Stage {
     public void printSpeed() {
         g.setFont(new Font("Arial", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Speed: " + player.getSpeed(), 20, 40);
+        g.drawString("Speed: " + (int) player.getSpeed() * 10, 20, 40);
     }
 
     public void printHealth() {
@@ -49,6 +49,40 @@ public class GamePanels extends Stage {
         xPos += 30;
         g.setFont(new Font("Arial", Font.BOLD, 30));
         g.drawString("ENTER: try again", (xPos < 0 ? 0 : xPos), getHEIGHT() / 2 + 50);
+
+        strategy.show();
+    }
+
+    public void printMainMenu() {
+        //color entire game panel black
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWIDTH(), getHEIGHT());
+
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.setColor(Color.RED);
+        int xPos = getHEIGHT() / 2 - 190;
+        g.drawString("MAIN MENU SHIT", (xPos < 0 ? 0 : xPos), getHEIGHT() / 2);
+
+        xPos += 30;
+        g.setFont(new Font("Arial", Font.BOLD, 30));
+        g.drawString("ENTER: START SHIT", (xPos < 0 ? 0 : xPos), getHEIGHT() / 2 + 50);
+
+        strategy.show();
+    }
+
+    public void printPause() {
+        //color entire game panel black
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWIDTH(), getHEIGHT());
+
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.setColor(Color.RED);
+        int xPos = getHEIGHT() / 2 - 190;
+        g.drawString("PAUSE MENU", (xPos < 0 ? 0 : xPos), getHEIGHT() / 2);
+
+        xPos += 30;
+        g.setFont(new Font("Arial", Font.BOLD, 30));
+        g.drawString("ESC: UNPAUSE", (xPos < 0 ? 0 : xPos), getHEIGHT() / 2 + 50);
 
         strategy.show();
     }

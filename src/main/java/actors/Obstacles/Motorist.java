@@ -8,10 +8,9 @@ import game.Utils;
 public class Motorist extends Actor {
     private int pointValue = 0;
     private int damageValue = 5; //how much damage is done
-    private int maxSteerVelocity = 1;
-    private int steeringResponsiveness = 1;
     private boolean hit = false;
-    private int[] laneXs = {115, 270, 430, 585};
+    private int minSpeed;
+    private int maxSpeed;
 
     public Motorist(Stage canvas) {
         super(canvas);
@@ -27,71 +26,21 @@ public class Motorist extends Actor {
     }
 
     private void updateSpeed() {
-        int currentLane = getCurrentLane();
-
-        //randomly altar the vx to create steering
-        if (Utils.randInt(1, 1000) >= 990) {
-            setVx(getVx() + Utils.randInt(-steeringResponsiveness, steeringResponsiveness));
-        }
-
-        //randomly stop veering
-//        if (vx != 0 && Utils.randInt(1, 1000) <= 5) {
-//            setVx(0);
-//        }
-
-        //keep the maxSteerVelocity within range
-        if (vx > maxSteerVelocity) {
-            vx = maxSteerVelocity;
-        } else if (vx < -maxSteerVelocity) {
-            vx = -maxSteerVelocity;
-        }
-
-        //only adjust the X pos at random intervals
-        if (Utils.randInt(1, 2) == 1) {
-            posX += vx;
-        }
-
-        posY += vy;
-
-        if (posX <= laneXs[currentLane]) {
-            posX = laneXs[currentLane];
-            vx = -vx;
-        } else if (posX + this.width >= laneXs[currentLane + 1]) {
-            posX = laneXs[currentLane + 1] - width;
-            vx = -vx;
-        }
-
         //if car position is 5 screens above or below main screen, remove them from game.
         if (posY > stage.getHeight() * 5 || posY < stage.getHeight() * -5) {
             setMarkedForRemoval(true);
         }
-    }
 
-    private int getCurrentLane() {
-        if (this.getPosX() >= laneXs[0] && this.getPosX() < laneXs[1]) {
-            return 0;
-        } else if (this.getPosX() >= laneXs[1] && this.getPosX() < laneXs[2]) {
-            return 1;
-        } else if (this.getPosX() >= laneXs[2] && this.getPosX() < laneXs[3]) {
-            return 2;
-        }
+//        if (Utils.randInt(1, 100) == 1) vy += Utils.randFloat(-1, 1);
 
-        return -1;
+        if (vy < -maxSpeed) vy += 0.01f;
+        else if (vy > -minSpeed) vy -= 0.01f;
+
+        posX += vx;
+        posY += vy;
     }
 
     public void collision(Actor a) {
-        //if motorist hits player, mark as hit, reduce point value and change sprite
-        if (a instanceof Player) {
-            if (this.getPosY() < a.getPosY()) { //if player is behind
-
-            }
-        }
-
-        if (a instanceof Motorist) {
-            if (this.getPosY() > a.getPosY()) {
-                this.setVy(a.getVy());
-            }
-        }
     }
 
     @Override
@@ -117,5 +66,13 @@ public class Motorist extends Actor {
 
     public void setHit(boolean hit) {
         this.hit = hit;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public void setMinSpeed(int minSpeed) {
+        this.minSpeed = minSpeed;
     }
 }

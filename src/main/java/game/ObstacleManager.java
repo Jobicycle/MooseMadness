@@ -19,12 +19,12 @@ public class ObstacleManager {
             moose.setPosY(-moose.getHeight());
 
             if (moose.getPosX() + moose.getWidth() / 2 > stage.getWidth() / 2) {
-                moose.setVx(Utils.randInt(-5, -1));
+                moose.setVx(Utils.randFloat(-2f, -0f));
             } else {
-                moose.setVx(Utils.randInt(1, 5));
+                moose.setVx(Utils.randFloat(0f, 2f));
             }
 
-            moose.setVy(Utils.randInt(-2, 2));
+            moose.setVy(Utils.randFloat(-1f, 1f));
             obstacles.add(moose);
         }
     }
