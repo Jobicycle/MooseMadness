@@ -33,14 +33,14 @@ public class Utils {
      * @param actor
      * @param otherActorList
      */
-    public static boolean spawnCollisionCheck(Actor actor, List<Actor> otherActorList) {
+    public static boolean safeSpawn(Actor actor, List<Actor> otherActorList) {
         Rectangle actorBounds = actor.getBounds();
 
         for (int i = 0; i < otherActorList.size(); i++) {
             Actor otherActor = otherActorList.get(i);
-            if (actorBounds.intersects(otherActor.getBounds())) return true;
+            if (actorBounds.intersects(otherActor.getBounds())) return false;
         }
-        return false;
+        return true;
     }
 
     /**

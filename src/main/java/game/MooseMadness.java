@@ -17,6 +17,7 @@ import java.util.List;
 public class MooseMadness extends Stage implements KeyListener {
     public GameState state = GameState.MENU;
     public long usedTime; //time taken per gameLoop step
+    public float sessionRunTime;
     public BufferStrategy strategy; //double buffering strategy
     public List<Actor> obstacles;
     public List<Actor> motorists;
@@ -64,6 +65,8 @@ public class MooseMadness extends Stage implements KeyListener {
         createBufferStrategy(2); //create a double buffer
         strategy = getBufferStrategy();
         requestFocus();
+        player = new Player(this); //add player
+        game();
     }
 
     /**
@@ -75,7 +78,7 @@ public class MooseMadness extends Stage implements KeyListener {
         motorists = new ArrayList<Actor>();
         powerups = new ArrayList<Actor>();
         trafficManager = new TrafficManager(this, motorists);
-        obstacleManager = new ObstacleManager(this);
+        obstacleManager = new ObstacleManager(this, obstacles);
         powerUpManager = new PowerUpManager(this);
         player = new Player(this); //add player
 
@@ -105,7 +108,7 @@ public class MooseMadness extends Stage implements KeyListener {
                 break;
 
             case HIGHSCORES:
-//                gamePanels.printHighScores();
+                gamePanels.printGameOver();
                 break;
 
             case PAUSE:
@@ -113,15 +116,18 @@ public class MooseMadness extends Stage implements KeyListener {
                 break;
 
             case GAMEOVER:
+                sessionRunTime = 0;
                 gamePanels.printGameOver();
                 break;
 
             case GAME:
                 usedTime = 0;
+
                 gameLoop:
                 while (isVisible()) {
                     gameUpdate();
                     paintWorld(g);
+                    sessionRunTime += 0.01;
                     Utils.calculateSleepTime(usedTime, DESIRED_FPS);
 
                     if (state == GameState.GAMEOVER) {
@@ -148,12 +154,12 @@ public class MooseMadness extends Stage implements KeyListener {
 
         for (Actor motorist : motorists) { //check motorists collisions
             Utils.checkCollision(motorist, obstacles);
-//            Utils.checkCollision(motorist, motorists);
+            Utils.checkCollision(motorist, motorists);
         }
 
         //ask managers if objects should be added to object lists
-//        obstacleManager.randomMoose(obstacles);
-        trafficManager.randomMotorist();
+//        obstacleManager.randomMoose(sessionRunTime);
+        trafficManager.randomMotorist(sessionRunTime);
 
         if (player.getHealth() <= 0) { //if game over
             state = GameState.GAMEOVER;

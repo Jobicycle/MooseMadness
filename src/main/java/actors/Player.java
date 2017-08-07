@@ -3,6 +3,7 @@ package actors;
 import actors.Obstacles.Moose;
 import actors.Obstacles.Motorist;
 import game.Stage;
+import game.Utils;
 
 import java.awt.event.KeyEvent;
 
@@ -12,6 +13,7 @@ public class Player extends Actor implements KeyboardControllable {
     private int health = 100;
     private float speed = 5f;
     private int score = 0;
+    private int[] roadBounds = {110, 590};
 
     //handling specs
     private float topSpeed;
@@ -19,6 +21,7 @@ public class Player extends Actor implements KeyboardControllable {
     private float handling;
     private float maxHandling;
     private float eBrakePower;
+    private boolean offRoad;
 
     /**
      * @param stage
@@ -51,13 +54,19 @@ public class Player extends Actor implements KeyboardControllable {
     public void update() {
         super.updateSpriteAnimation();
         updateSpeed();
+
+        if (speed > 0) {
+            if (posY > (int) (Stage.HEIGHT * 0.50)) posY -= 1;
+            else if (posY < (int) (Stage.HEIGHT * 0.50)) posY += 1;
+        }
     }
+
 
     /**
      *
      */
     private void updateSpeed() {
-        if (up && speed < topSpeed) //up arrow to increase speed, which affects the y position of everything on screen relative to player
+        if (up && speed < topSpeed && !offRoad) //up arrow to increase speed, which affects the y position of everything on screen relative to player
             speed += acceleration;
 
         if (speed >= 0) { //allow for steering when moving
@@ -77,8 +86,8 @@ public class Player extends Actor implements KeyboardControllable {
 
         //if no longer steering, gradually reduce car drifting
         if (!left && !right && vx != 0) {
-            if (vx > 0) vx -= handling * 2;
-            else if (vx < 0) vx += handling * 2;
+            if (vx > 0) vx -= handling * 1.5;
+            else if (vx < 0) vx += handling * 1.5;
         }
 
         //limit handling to maxHandling bounds and set to 0 when between handling and 0
@@ -86,7 +95,24 @@ public class Player extends Actor implements KeyboardControllable {
         else if (vx < -maxHandling) vx = -maxHandling;
         else if (vx > 0 && vx < handling || vx < 0 && vx > -handling) vx = 0;
 
-        posX += vx;
+        //limit car speed and randomly altar posX to simulate rough terrain
+        if (posX + width / 1.5 <= roadBounds[0] || posX + width / 1.5 > roadBounds[1]) {
+            offRoad = true;
+            if (speed >= 6) speed -= 0.1;
+            if (Utils.randInt(0, 1) == 1) posX += 2;
+            else posX -= 2;
+        } else {
+            offRoad = false;
+        }
+
+        //prevent car from steering out of bounds
+        if (posX < 0 || posX + width >= stage.getWidth()) vx = -vx;
+        if (posX < 0) posX = 0;
+        if (posX + width >= stage.getWidth()) posX = stage.getWidth() - width;
+
+        //reduce steering effectiveness if off road, otherwise apply normal steering
+        if (offRoad) posX += vx / 2;
+        else posX += vx;
     }
 
 
@@ -142,23 +168,38 @@ public class Player extends Actor implements KeyboardControllable {
     }
 
     public void collision(Actor a) {
-        //if player hits a moose, reduce health and speed
+        //if player hits a moose
         if (a instanceof Moose && !((Moose) a).isHit()) {
             health -= ((Moose) a).getDamageValue();
             speed -= ((Moose) a).getWeight();
         }
 
-        //if player hits a motorist
-        if (a instanceof Motorist) {
-            if (posY < a.getPosY()) { //if motorist behind me
-                a.setVy(a.getVy() + 0.1f);
-            } else { //if motorist in front of me
-                a.setVy(a.getVy() - 0.1f);
+
+//        if player hits a motorist
+        if (a instanceof Motorist && !((Motorist) a).isHit()) {
+            health -= ((Motorist) a).getDamageValue();
+
+            if (posY > a.getPosY() + a.getHeight() - speed) { //if motorist in front
+                posY = a.getPosY() + a.getHeight() + 10;
+                speed -= 2;
+            } else if (posY + height < a.getPosY() + speed) { //if motorist behind
+                posY = a.getPosY() - height - 10;
+                speed += 2;
+                a.setVy(a.getVy() + 1f);
+            } else if (posY < a.getPosY() + a.getHeight() && posY + height > a.getPosY()) { //if sideswipe
+                vx = -vx / 1.5f;
+                if (posX < a.getPosX()) { //if motorist to the right
+                    posX = a.getPosX() - width;
+                    a.setVx(a.getVx() + 1f);
+                } else if (posX > a.getPosX()) { //if motorist to the left
+                    posX = a.getPosX() + a.getWidth();
+                    a.setVx(a.getVx() - 1f);
+                }
             }
         }
     }
 
-    //TODO tune to projectile
+        //TODO tune to projectile
 //    private void fire() {
 //        Actor shot = new Shot(stage);
 //        shot.setX(posX);

@@ -56,12 +56,12 @@ public class Moose extends Actor {
             }
         }
 
-        if (a instanceof Motorist) {
-            if (!hit) {
-                hit = true;
-                sprites = new String[]{"blood.png"};
-            }
-        }
+//        if (a instanceof Motorist) {
+//            if (!hit) {
+//                hit = true;
+//                sprites = new String[]{"blood.png"};
+//            }
+//        }
     }
 
     /**

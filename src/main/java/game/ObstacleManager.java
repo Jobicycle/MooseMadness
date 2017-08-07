@@ -7,13 +7,18 @@ import java.util.List;
 
 public class ObstacleManager {
     private Stage stage;
+    private List<Actor> obstacles;
+    private int maxObstacles = 0;
 
-    public ObstacleManager(Stage stage) {
+    public ObstacleManager(Stage stage, List<Actor> obstacles) {
         this.stage = stage;
+        this.obstacles = obstacles;
     }
 
-    public void randomMoose(List<Actor> obstacles) {
-        if (Utils.randInt(0, 1000) >= 990) {
+    public void randomMoose(float sessionRunTime) {
+        maxObstacles = (int) sessionRunTime / 5 + 1;
+
+        if (obstacles.size() < maxObstacles) {
             Actor moose = new Moose(stage);
             moose.setPosX(Utils.randInt(0 - moose.getWidth(), stage.getWidth()) + moose.getWidth());
             moose.setPosY(-moose.getHeight());

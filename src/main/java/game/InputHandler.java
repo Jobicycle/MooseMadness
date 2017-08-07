@@ -41,6 +41,9 @@ public class InputHandler extends Thread {
                     mooseMadness.state = Stage.GameState.GAME;
                     mooseMadness.initWorld();
                     mooseMadness.game();
+                } else if (KeyEvent.VK_SPACE == keyPressed) { //if escape key quit program
+                    mooseMadness.state = Stage.GameState.HIGHSCORES;
+                    mooseMadness.game();
                 } else if (KeyEvent.VK_ESCAPE == keyPressed) { //if escape key quit program
                     System.exit(0);
                 }
