@@ -68,6 +68,12 @@ public class Player extends Actor implements KeyboardControllable {
         if (offRoad || speed < topSpeed / 2) {
             score -= 1;
         }
+
+        if (health <= 10) sprites[0] = "cars/pcar5.png";
+        else if (health <= 30) sprites[0] = "cars/pcar4.png";
+        else if (health <= 50) sprites[0] = "cars/pcar3.png";
+        else if (health <= 70) sprites[0] = "cars/pcar2.png";
+        else if (health <= 90) sprites[0] = "cars/pcar1.png";
     }
 
 
@@ -232,8 +238,8 @@ public class Player extends Actor implements KeyboardControllable {
                 playSound("sounds/crash" + Utils.randInt(0, 9) + ".wav");
                 health -= moose.getDamageValue();
                 speed *= 0.9;
-                if (posX + width / 2 > a.getPosX() + a.getWidth() / 2) vx += Utils.randFloat(3,6);
-                else vx -= Utils.randFloat(3,6);
+                if (posX + width / 2 > a.getPosX() + a.getWidth() / 2) vx += Utils.randFloat(3, 6);
+                else vx -= Utils.randFloat(3, 6);
             }
         }
 

@@ -111,7 +111,7 @@ public class MooseMadness extends Stage implements KeyListener {
                 break;
 
             case HIGHSCORES:
-                gamePanels.printGameOver();
+                gamePanels.printHighscores();
                 break;
 
             case PAUSE:

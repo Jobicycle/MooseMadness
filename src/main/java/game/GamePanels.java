@@ -41,38 +41,38 @@ public class GamePanels extends Stage {
      * Print Score() - used to display score during game
      */
     public void printScore() {
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setFont(new Font("Consolas", Font.PLAIN, 30));
         g.setColor(Color.green);
-        g.drawString("Score: ", 20, 20);
+        g.drawString("Score: ", 20, 30);
         g.setColor(Color.red);
-        g.drawString("" + player.getScore(), 90, 20);
-    }
-
-    /**
-     * PrintSpeed() - used to print speed during game
-     */
-    public void printSpeed() {
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
-        g.setColor(Color.green);
-        g.drawString("Speed: " + (int) player.getSpeed() * 20, 20, 40);
+        g.drawString("" + player.getScore(), 130, 30);
     }
 
     /**
      * printHealth() - used to print health during game
      */
     public void printHealth() {
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setFont(new Font("Consolas", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Health: " + player.getHealth(), 20, 60);
+        g.drawString("Health: " + player.getHealth(), 20, 50);
+    }
+
+    /**
+     * PrintSpeed() - used to print speed during game
+     */
+    public void printSpeed() {
+        g.setFont(new Font("Consolas", Font.PLAIN, 20));
+        g.setColor(Color.green);
+        g.drawString("Speed: " + (int) player.getSpeed() * 20, 20, 70);
     }
 
     /**
      * Prints the number of air horns the player has in the ui
      */
     public void printAirHorns() {
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setFont(new Font("Consolas", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Horns: " + player.getNumberOfHorns(), 20, 80);
+        g.drawString("Horns: " + player.getNumberOfHorns(), 20, 90);
     }
 
     /**
@@ -80,9 +80,9 @@ public class GamePanels extends Stage {
      * @param sessionRunTime
      */
     public void printTimePlayed(float sessionRunTime) {
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setFont(new Font("Consolas", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Time: " + String.format("%.02f", sessionRunTime), 20, 100);
+        g.drawString("Time: " + String.format("%.02f", sessionRunTime), 20, 110);
     }
 
     /**

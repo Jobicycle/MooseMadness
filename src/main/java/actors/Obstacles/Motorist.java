@@ -22,7 +22,7 @@ public class Motorist extends Actor {
      */
     public Motorist(Stage canvas) {
         super(canvas);
-        randomCarNumber = Utils.randInt(0, 3);
+        randomCarNumber = Utils.randInt(0, 7);
         sprites = new String[]{"cars/car" + randomCarNumber + ".png"};
         width = 50;
         height = 100;
