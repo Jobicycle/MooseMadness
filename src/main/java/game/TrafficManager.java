@@ -9,7 +9,7 @@ public class TrafficManager {
     private Stage stage;
     private List<Actor> motorists;
     private int maxMotorists = 0;
-    private int[] laneXs = {190, 350, 510};
+    private int[] laneXPos = {194, 298, 402, 506, 610, 714};
 
     public TrafficManager(Stage stage, List<Actor> motorists) {
         this.stage = stage;
@@ -17,28 +17,23 @@ public class TrafficManager {
     }
 
     public void randomMotorist(float sessionRunTime) {
-        maxMotorists = (int) sessionRunTime  + 1;
+        maxMotorists = (int) sessionRunTime / 10 + 1;
 
-        if (motorists.size() < maxMotorists) {
+        if (motorists.size() < maxMotorists  && sessionRunTime > 1) {
             Motorist motorist = new Motorist(stage);
-            int lane = 0;
+            int lane;
 
-            if (Utils.randInt(1, 10) >= 4) { //create a non-speeder (60% chance)
-                lane = Utils.randInt(1, 2);
-                motorist.setMinSpeed(8);
-                motorist.setMaxSpeed(9);
-                motorist.setVy(Utils.randFloat(-9, -8));
-                motorist.setPosY(stage.getHeight() * -2);
+            if (Utils.randInt(1, 2) == 1) {
+                motorist.setVy(Utils.randFloat(-3, -1));
+                motorist.setPosY(0 - motorist.getHeight());
             } else { //create a speeder
-                lane = Utils.randInt(0, 1);
-                motorist.setMinSpeed(11);
-                motorist.setMaxSpeed(12);
-                motorist.setVy(Utils.randFloat(-12, -11));
-                motorist.setPosY(stage.getHeight() * 2);
+                motorist.setVy(Utils.randFloat(-8, -6));
+                motorist.setPosY(stage.getHeight());
             }
 
-            motorist.setPosX(laneXs[lane] - motorist.getWidth() / 2 + Utils.randInt(-motorist.getWidth() / 2, motorist.getWidth() / 2));
-            if (Utils.safeSpawn(motorist, motorists) == true) motorists.add(motorist);
+            lane = Utils.randInt(0, 5);
+            motorist.setPosX(laneXPos[lane] - motorist.getWidth() / 2 + Utils.randInt(-motorist.getWidth()/2, motorist.getWidth()));
+            if (Utils.safeSpawn(motorist, motorists)) motorists.add(motorist);
         }
     }
 }

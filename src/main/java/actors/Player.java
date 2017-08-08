@@ -2,6 +2,8 @@ package actors;
 
 import actors.Obstacles.Moose;
 import actors.Obstacles.Motorist;
+import actors.Obstacles.Pothole;
+import actors.PowerUps.Wrench;
 import game.Stage;
 import game.Utils;
 
@@ -11,9 +13,9 @@ public class Player extends Actor implements KeyboardControllable {
 
     private boolean up, down, left, right, eBrake;
     private int health = 100;
-    private float speed = 5f;
+    private float speed = 4f;
     private int score = 0;
-    private int[] roadBounds = {110, 590};
+    private int[] roadBounds = {142, 768};
 
     //handling specs
     private float topSpeed;
@@ -29,19 +31,22 @@ public class Player extends Actor implements KeyboardControllable {
     public Player(Stage stage) {
         super(stage);
 
-        sprites = new String[]{"motorist0.png"};
+        sprites = new String[]{"car0.png"};
         frame = 0;
-        frameSpeed = 35;
+        frameSpeed = 10;
         actorSpeed = 10;
 
-        width = 65;
-        height = 146;
+//        width = 60;
+//        height = 114;
+        width = 54;
+        height = 102;
+
         posX = Stage.WIDTH / 2 - width / 2;
         posY = (int) (Stage.HEIGHT * 0.50);
 
-        topSpeed = 10f;
+        topSpeed = 5f;
         acceleration = 0.04f;
-        handling = 0.2f;
+        handling = 0.1f;
         maxHandling = 5f;
         eBrakePower = 0.3f;
 
@@ -55,9 +60,15 @@ public class Player extends Actor implements KeyboardControllable {
         super.updateSpriteAnimation();
         updateSpeed();
 
+        // keep player from going out of y bounds
         if (speed > 0) {
             if (posY > (int) (Stage.HEIGHT * 0.50)) posY -= 1;
             else if (posY < (int) (Stage.HEIGHT * 0.50)) posY += 1;
+        }
+
+        // reduce score if driving on the sides
+        if (offRoad || speed < topSpeed / 2) {
+            score -= 1;
         }
     }
 
@@ -66,7 +77,7 @@ public class Player extends Actor implements KeyboardControllable {
      *
      */
     private void updateSpeed() {
-        if (up && speed < topSpeed && !offRoad) //up arrow to increase speed, which affects the y position of everything on screen relative to player
+        if (up && speed < topSpeed) //up arrow to increase speed, which affects the y position of everything on screen relative to player
             speed += acceleration;
 
         if (speed >= 0) { //allow for steering when moving
@@ -80,8 +91,8 @@ public class Player extends Actor implements KeyboardControllable {
         }
 
         //keep speed within bounds of 0 and topSpeed
-        if (speed < 0) speed = 0;
-        if (speed > topSpeed) speed = topSpeed;
+//        if (speed < 0) speed = 0;
+//        if (speed > topSpeed) speed -= 0.01f;
 
 
         //if no longer steering, gradually reduce car drifting
@@ -98,9 +109,11 @@ public class Player extends Actor implements KeyboardControllable {
         //limit car speed and randomly altar posX to simulate rough terrain
         if (posX + width / 1.5 <= roadBounds[0] || posX + width / 1.5 > roadBounds[1]) {
             offRoad = true;
-            if (speed >= 6) speed -= 0.1;
-            if (Utils.randInt(0, 1) == 1) posX += 2;
-            else posX -= 2;
+            if (speed >= topSpeed / 2) speed -= 0.1;
+            if (speed > 0) {
+                if (Utils.randInt(0, 1) == 1) posX += 2;
+                else posX -= 2;
+            }
         } else {
             offRoad = false;
         }
@@ -168,38 +181,73 @@ public class Player extends Actor implements KeyboardControllable {
     }
 
     public void collision(Actor a) {
+
+        if (a instanceof Wrench) {
+            Wrench wrench = (Wrench) a;
+            health += wrench.getHealingValue();
+            wrench.setMarkedForRemoval(true);
+        }
+
         //if player hits a moose
-        if (a instanceof Moose && !((Moose) a).isHit()) {
-            health -= ((Moose) a).getDamageValue();
-            speed -= ((Moose) a).getWeight();
+        if (a instanceof Moose) {
+            Moose moose = (Moose) a;
+
+            if (!moose.isHit()) {
+                health -= moose.getDamageValue();
+                speed -= 1;
+                if (posX > a.getPosX()) vx += 2;
+                else vx -= 2;}
+        }
+
+        if (a instanceof Pothole) {
+            Pothole pothole = (Pothole) a;
+
+            if (!pothole.isHit()) {
+                playSound("pothole.wav");
+                health -= pothole.getDamageValue();
+                speed -= 0.2f;
+            }
         }
 
 
 //        if player hits a motorist
-        if (a instanceof Motorist && !((Motorist) a).isHit()) {
-            health -= ((Motorist) a).getDamageValue();
+        if (a instanceof Motorist) {
+            playSound("crash" + Utils.randInt(0,2) + ".wav");
+            Motorist motorist = (Motorist) a;
 
-            if (posY > a.getPosY() + a.getHeight() - speed) { //if motorist in front
-                posY = a.getPosY() + a.getHeight() + 10;
+            if (!motorist.isInAccident()) {
+                health -= motorist.getDamageValue();
+                motorist.setInAccident(true);
+                motorist.setPointValue(0);
+            }
+
+            if (posY > motorist.getPosY() + motorist.getHeight() - speed) { //if motorist in front
+                posY = motorist.getPosY() + motorist.getHeight();
                 speed -= 2;
-            } else if (posY + height < a.getPosY() + speed) { //if motorist behind
-                posY = a.getPosY() - height - 10;
-                speed += 2;
-                a.setVy(a.getVy() + 1f);
-            } else if (posY < a.getPosY() + a.getHeight() && posY + height > a.getPosY()) { //if sideswipe
+                if (posX > motorist.getPosX()) motorist.setVx(Utils.randFloat(-1f, -0.2f));
+                else if (posX < motorist.getPosX()) motorist.setVx(Utils.randFloat(0.2f, 1f));
+
+            } else if (posY + height < motorist.getPosY() + speed) { //if motorist behind
+                posY = motorist.getPosY() - height;
+                motorist.setVy(-speed + 2);
+                if (posX > motorist.getPosX()) motorist.setVx(Utils.randFloat(-1f, -0.2f));
+                else if (posX < motorist.getPosX()) motorist.setVx(Utils.randFloat(0.2f, 1f));
+
+            } else if (posY < motorist.getPosY() + motorist.getHeight() && posY + height > motorist.getPosY()) { //if sideswipe
                 vx = -vx / 1.5f;
-                if (posX < a.getPosX()) { //if motorist to the right
-                    posX = a.getPosX() - width;
-                    a.setVx(a.getVx() + 1f);
+                if (posX < motorist.getPosX()) { //if motorist to the right
+                    posX = motorist.getPosX() - width;
+                    motorist.setVx(motorist.getVx() + 1f);
+
                 } else if (posX > a.getPosX()) { //if motorist to the left
-                    posX = a.getPosX() + a.getWidth();
-                    a.setVx(a.getVx() - 1f);
+                    posX = motorist.getPosX() + motorist.getWidth();
+                    motorist.setVx(motorist.getVx() - 1f);
                 }
             }
         }
     }
 
-        //TODO tune to projectile
+    //TODO tune to projectile
 //    private void fire() {
 //        Actor shot = new Shot(stage);
 //        shot.setX(posX);
@@ -235,4 +283,14 @@ public class Player extends Actor implements KeyboardControllable {
     public void setSpeed(int speed) {
         this.speed = speed;
     }
+
+    public float getTopSpeed() {
+        return topSpeed;
+    }
+
+    public void setTopSpeed(float topSpeed) {
+        this.topSpeed = topSpeed;
+    }
+
+
 }

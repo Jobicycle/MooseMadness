@@ -6,18 +6,21 @@ import game.Stage;
 import game.Utils;
 
 public class Motorist extends Actor {
-    private int pointValue = 0;
+    private int pointValue = 50;
     private int damageValue = 5; //how much damage is done
-    private boolean hit;
-    private int minSpeed;
-    private int maxSpeed;
+    private boolean inAccident;
+    private int[] roadBounds = {142, 768};
+    private int randomCarNumber;
 
     public Motorist(Stage canvas) {
         super(canvas);
-        sprites = new String[]{"motorist" + Utils.randInt(0, 0) + ".png"};
+        randomCarNumber = Utils.randInt(0, 3);
+        sprites = new String[]{"car" + randomCarNumber + ".png"};
         frameSpeed = 1;
-        width = 65;
-        height = 146;
+//        width = 60;
+//        height = 114;
+        width = 54;
+        height = 102;
     }
 
     public void update() {
@@ -26,36 +29,70 @@ public class Motorist extends Actor {
     }
 
     private void updateSpeed() {
-        //if car position is 2 screens above or below main screen, remove them from game.
-        if (posY > stage.getHeight() * 3 || posY < stage.getHeight() * -3) {
+        if (vy != 0) posX += vx;
+        posY += vy;
+
+        //if inAccident, slow car to a stop
+        if (inAccident && vy < 0) vy += 0.02f;
+        if (vy > 0 && vy < 0.1f) vy = 0;
+
+        //remove car if it passes top or bottom of screen
+        if (posY > stage.getHeight() || posY + height < 0) {
             setMarkedForRemoval(true);
         }
 
-        if (hit && vy < 0) {
-            vy += 0.1f;
+        //randomly altar posX to simulate rough terrain
+        if (posX + width / 1.5 <= roadBounds[0] || posX + width / 1.5 > roadBounds[1]) {
+            if (vy < 0) posX += Utils.randInt(-1, 1);
         }
 
-//        if (Utils.randInt(1, 100) == 1) vy += Utils.randFloat(-1, 1);
-
-//        if (vy < -maxSpeed) vy += 0.01f;
-//        else if (vy > -minSpeed) vy -= 0.01f;
-
-//        if (vx < 0) vx += 0.01f;
-//        else if (vx > 0) vx -= 0.01f;
-
-        posX += vx;
-        posY += vy;
+        //prevent car from steering out of bounds
+        if (posX < 0 || posX + width >= stage.getWidth()) vx = -vx / 2;
+        if (posX < 0) posX = 0;
+        if (posX + width >= stage.getWidth()) posX = stage.getWidth() - width;
     }
 
     public void collision(Actor a) {
         if (a instanceof Motorist) {
             Motorist them = (Motorist) a;
+            sprites[0] = "car" + randomCarNumber + "b.png";
 
-            if (!them.isHit()) {
-                hit = true;
-                them.setHit(true);
-                sprites = new String[]{"blood.png"};
+            if (!them.isInAccident()) {
+                them.setInAccident(true);
+                this.setInAccident(true);
+                playSound("crash" + Utils.randInt(0,2) + ".wav");
             }
+
+            if (posY > them.getPosY() + them.getHeight() + vy) { //if they are in front
+                vy = them.getVy();
+                posY = them.getPosY() + them.getHeight();
+                vx += Utils.randFloat(-1, 1);
+
+            } else if (posY < them.getPosY() + them.getHeight() && posY + height > them.getPosY()) {
+                if (posX < them.getPosX()) { //if motorist to the right
+                    posX = them.getPosX() - width;
+                } else if (posX > a.getPosX()) { //if motorist to the left
+                    posX = them.getPosX() + them.getWidth();
+                }
+            }
+        }
+
+        if (a instanceof Moose) {
+            Moose moose = (Moose) a;
+            sprites[0] = "car" + randomCarNumber + "b.png";
+
+            if (!moose.isHit()) {
+                this.setInAccident(true);
+                vx = Utils.randFloat(-2, 2);
+            }
+        }
+
+        if (a instanceof Player) {
+            sprites[0] = "car" + randomCarNumber + "b.png";
+        }
+
+        if (a instanceof Pothole) {
+            vx += Utils.randFloat(-1, 1);
         }
     }
 
@@ -73,23 +110,11 @@ public class Motorist extends Actor {
         return damageValue;
     }
 
-    public void setDamageValue(int damageValue) {
-        this.damageValue = damageValue;
+    public boolean isInAccident() {
+        return inAccident;
     }
 
-    public void setMaxSpeed(int maxSpeed) {
-        this.maxSpeed = maxSpeed;
-    }
-
-    public void setMinSpeed(int minSpeed) {
-        this.minSpeed = minSpeed;
-    }
-
-    public boolean isHit() {
-        return hit;
-    }
-
-    public void setHit(boolean hit) {
-        this.hit = hit;
+    public void setInAccident(boolean inAccident) {
+        this.inAccident = inAccident;
     }
 }

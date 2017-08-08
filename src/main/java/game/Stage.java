@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Stage extends Canvas implements ImageObserver {
-    public static final int WIDTH = 700;
-    public static final int HEIGHT = 640;
+    public static final int WIDTH = 900;
+    public static final int HEIGHT = 600;
     public static final int DESIRED_FPS = 60;
     public GameState state;
 

@@ -21,7 +21,7 @@ public class MooseMadness extends Stage implements KeyListener {
     public BufferStrategy strategy; //double buffering strategy
     public List<Actor> obstacles;
     public List<Actor> motorists;
-    public List<Actor> powerups;
+    public List<Actor> powerUps;
 
     private BufferedImage background, backgroundTile; //background cache
     private int backgroundY; //background cache position
@@ -76,14 +76,14 @@ public class MooseMadness extends Stage implements KeyListener {
         //add powerup, obstacle, and traffic managers and lists
         obstacles = new ArrayList<Actor>();
         motorists = new ArrayList<Actor>();
-        powerups = new ArrayList<Actor>();
+        powerUps = new ArrayList<Actor>();
         trafficManager = new TrafficManager(this, motorists);
         obstacleManager = new ObstacleManager(this, obstacles);
-        powerUpManager = new PowerUpManager(this);
+        powerUpManager = new PowerUpManager(this, powerUps);
         player = new Player(this); //add player
 
         //load background
-        backgroundTile = ResourceLoader.getInstance().getSprite("road0.gif");
+        backgroundTile = ResourceLoader.getInstance().getSprite("road0.png");
         background = ResourceLoader.createCompatible(WIDTH, HEIGHT + backgroundTile.getHeight(), Transparency.OPAQUE);
         Graphics2D g = (Graphics2D) background.getGraphics();
         g.setPaint(new TexturePaint(backgroundTile, new Rectangle(0, 0, backgroundTile.getWidth(), backgroundTile.getHeight())));
@@ -146,10 +146,12 @@ public class MooseMadness extends Stage implements KeyListener {
         //iterate through current obstacle list, check for collisions, remove unnecessary obstacles, update obstacle position based on player speed.
         updateActors(obstacles);
         updateActors(motorists);
+        updateActors(powerUps);
 
-        //check for player collisions between obstacles, motorists, and powerups
+        //check for player collisions between obstacles, motorists, and powerUps
         Utils.checkCollision(player, obstacles);
         Utils.checkCollision(player, motorists);
+        Utils.checkCollision(player, powerUps);
         player.update();
 
         for (Actor motorist : motorists) { //check motorists collisions
@@ -158,8 +160,9 @@ public class MooseMadness extends Stage implements KeyListener {
         }
 
         //ask managers if objects should be added to object lists
-//        obstacleManager.randomMoose(sessionRunTime);
+        obstacleManager.randomMoose(sessionRunTime);
         trafficManager.randomMotorist(sessionRunTime);
+        powerUpManager.randomWrench(sessionRunTime);
 
         if (player.getHealth() <= 0) { //if game over
             state = GameState.GAMEOVER;
@@ -176,7 +179,7 @@ public class MooseMadness extends Stage implements KeyListener {
             Utils.checkCollision(actor, actorList);
 
             if (actor.isMarkedForRemoval()) {
-                player.updateScore(actor.getPointValue());
+                if (player.getSpeed() > player.getTopSpeed() / 2) player.updateScore(actor.getPointValue());
                 actorList.remove(i);
             } else {
                 actor.setPosY(actor.getPosY() + (int) player.getSpeed());
@@ -204,6 +207,11 @@ public class MooseMadness extends Stage implements KeyListener {
         //paint the motorists
         for (Actor motorist : motorists) {
             motorist.paint(g);
+        }
+
+        //paint the powerups
+        for (Actor powerUp: powerUps) {
+            powerUp.paint(g);
         }
 
         //paint the player

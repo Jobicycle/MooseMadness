@@ -123,4 +123,8 @@ public class Actor {
     public int getPointValue() {
         return Actor.POINT_VALUE;
     }
+
+    public void setFrameSpeed(int frameSpeed) {
+        this.frameSpeed = frameSpeed;
+    }
 }

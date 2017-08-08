@@ -15,10 +15,10 @@ public class Moose extends Actor {
      */
     public Moose(Stage stage) {
         super(stage);
-        sprites = new String[]{"moose0.png"};
-        frameSpeed = 1;
-        width = 60;
-        height = 60;
+        sprites = new String[]{"moose0.png", "moose1.png", "moose2.png"};
+        frameSpeed = 15;
+        width = 50;
+        height = 50;
     }
 
     /**
@@ -27,8 +27,8 @@ public class Moose extends Actor {
     public void update() {
         if (!hit) {
             super.updateSpriteAnimation();
-            updateSpeed();
         }
+        updateSpeed();
     }
 
     /**
@@ -38,9 +38,22 @@ public class Moose extends Actor {
         posX += vx;
         posY += vy;
 
-        if (posX > stage.getWidth() || posY > stage.getHeight()) {
+        if (posY >= stage.getHeight()) {
             setMarkedForRemoval(true);
         }
+
+        //gradually slow down vx and vy after is has been hit
+        if (hit) {
+            if (vx > 0) vx -= 0.05f;
+            else vx += 0.05f;
+
+            if (vy > 0) vy -= 0.05f;
+            else vy += 0.05f;
+
+            if (vx > 0 && vx < 0.1 || vx < 0 && vx > -0.1) vx = 0;
+            if (vy > 0 && vy < 0.1 || vy < 0 && vy > -0.1) vy = 0;
+        }
+
     }
 
     /**
@@ -50,18 +63,25 @@ public class Moose extends Actor {
         //if moose hits player, mark as hit, reduce point value and change sprite
         if (a instanceof Player) {
             if (!hit) {
+                playSound("moosehit.wav");
                 hit = true;
                 pointValue = 0;
-                sprites = new String[]{"blood.png"};
+                sprites[0] = "dmoose0.png";
+                sprites[1] = "dmoose1.png";
+                sprites[2] = "dmoose2.png";
+
             }
         }
 
-//        if (a instanceof Motorist) {
-//            if (!hit) {
-//                hit = true;
-//                sprites = new String[]{"blood.png"};
-//            }
-//        }
+        if (a instanceof Motorist) {
+            if (!hit) {
+                playSound("moosehit.wav");
+                hit = true;
+                sprites[0] = "dmoose0.png";
+                sprites[1] = "dmoose1.png";
+                sprites[2] = "dmoose2.png";
+            }
+        }
     }
 
     /**
@@ -72,24 +92,10 @@ public class Moose extends Actor {
     }
 
     /**
-     * @param pointValue
-     */
-    public void setPointValue(int pointValue) {
-        this.pointValue = pointValue;
-    }
-
-    /**
      * @return
      */
     public int getDamageValue() {
         return damageValue;
-    }
-
-    /**
-     * @param damageValue
-     */
-    public void setDamageValue(int damageValue) {
-        this.damageValue = damageValue;
     }
 
     /**
