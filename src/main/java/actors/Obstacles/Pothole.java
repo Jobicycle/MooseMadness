@@ -13,8 +13,8 @@ public class Pothole extends Actor {
     public Pothole(Stage canvas) {
         super(canvas);
         sprites = new String[]{"pothole" + Utils.randInt(0,1) + ".png"};
-        width = 40;
-        height = 64;
+        width = 30;
+        height = 55;
     }
 
     public void update() {

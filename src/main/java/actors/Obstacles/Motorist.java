@@ -60,13 +60,17 @@ public class Motorist extends Actor {
             if (!them.isInAccident()) {
                 them.setInAccident(true);
                 this.setInAccident(true);
-                playSound("crash" + Utils.randInt(0,2) + ".wav");
+                playSound("crash" + Utils.randInt(0, 2) + ".wav");
             }
 
-            if (posY > them.getPosY() + them.getHeight() + vy) { //if they are in front
+            if (posY > them.getPosY() + them.getHeight() - 5) { //if they are in front
                 vy = them.getVy();
                 posY = them.getPosY() + them.getHeight();
                 vx += Utils.randFloat(-1, 1);
+            } else if (posY + height < them.getPosY() + 5) { //they are behind
+                them.setVy(vy);
+                them.setPosY(posY + height);
+                them.vx += Utils.randFloat(-1, 1);
 
             } else if (posY < them.getPosY() + them.getHeight() && posY + height > them.getPosY()) {
                 if (posX < them.getPosX()) { //if motorist to the right
