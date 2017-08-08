@@ -3,20 +3,24 @@ package actors;
 import actors.Obstacles.Moose;
 import actors.Obstacles.Motorist;
 import actors.Obstacles.Pothole;
+import actors.PowerUps.AirHorn;
 import actors.PowerUps.Wrench;
 import game.Stage;
 import game.Utils;
 
 import java.awt.event.KeyEvent;
 
+/**
+ * Player class. Contains all the keybindings and behaviors of hte player car.
+ */
 public class Player extends Actor implements KeyboardControllable {
 
-    private boolean up, down, left, right, eBrake, activateHorn;
-    private int health = 100;
-    private float speed = 4f;
-    private int score = 0;
-    private int hornPowerUp = 1;
-    private int[] roadBounds = {142, 768};
+    private boolean up, down, left, right, eBrake, activateHorn; //booleans for different actions
+    private int health = 100; //starting health
+    private float speed = 4f; //max speed
+    private int score = 0; //starting score
+    private int numberOfHorns = 0; //number of horn powerups
+    private int[] roadBounds = {142, 768}; //coordinates of the left and right most grassy boundaries.
 
     //handling specs
     private float topSpeed;
@@ -27,6 +31,8 @@ public class Player extends Actor implements KeyboardControllable {
     private boolean offRoad;
 
     /**
+     * Player constructor
+     *
      * @param stage
      */
     public Player(Stage stage) {
@@ -36,8 +42,6 @@ public class Player extends Actor implements KeyboardControllable {
         frame = 0;
         frameSpeed = 1000;
 
-//        width = 60;
-//        height = 114;
         width = 54;
         height = 102;
 
@@ -54,17 +58,11 @@ public class Player extends Actor implements KeyboardControllable {
     }
 
     /**
-     *
+     * Player updater
      */
     public void update() {
         super.updateSpriteAnimation();
         updateSpeed();
-
-        // keep player from going out of y bounds
-        if (speed > 0) {
-            if (posY > (int) (Stage.HEIGHT * 0.50)) posY -= 1;
-            else if (posY < (int) (Stage.HEIGHT * 0.50)) posY += 1;
-        }
 
         // reduce score if driving on the sides
         if (offRoad || speed < topSpeed / 2) {
@@ -74,7 +72,7 @@ public class Player extends Actor implements KeyboardControllable {
 
 
     /**
-     *
+     * Playeer speed updater. Handles speed and steering
      */
     private void updateSpeed() {
         if (up && speed < topSpeed) //up arrow to increase speed, which affects the y position of everything on screen relative to player
@@ -89,11 +87,6 @@ public class Player extends Actor implements KeyboardControllable {
             if (down) speed -= acceleration;
             if (eBrake) speed -= eBrakePower;
         }
-
-        //keep speed within bounds of 0 and topSpeed
-//        if (speed < 0) speed = 0;
-//        if (speed > topSpeed) speed -= 0.01f;
-
 
         //if no longer steering, gradually reduce car drifting
         if (!left && !right && vx != 0) {
@@ -118,7 +111,13 @@ public class Player extends Actor implements KeyboardControllable {
             offRoad = false;
         }
 
-        //prevent car from steering out of bounds
+        // keep player from going out of y bounds
+        if (speed > 0) {
+            if (posY > (int) (Stage.HEIGHT * 0.50)) posY -= 1;
+            else if (posY < (int) (Stage.HEIGHT * 0.50)) posY += 1;
+        }
+
+        //prevent player from steering out of x bounds
         if (posX < 0 || posX + width >= stage.getWidth()) vx = -vx;
         if (posX < 0) posX = 0;
         if (posX + width >= stage.getWidth()) posX = stage.getWidth() - width;
@@ -129,6 +128,11 @@ public class Player extends Actor implements KeyboardControllable {
     }
 
 
+    /**
+     * key press triggers. Activates booleans according to which key was pressed.
+     *
+     * @param e
+     */
     public void triggerKeyPress(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_UP:
@@ -158,11 +162,18 @@ public class Player extends Actor implements KeyboardControllable {
                 }
                 break;
             case KeyEvent.VK_CONTROL:
-                activateHorn = true;
+                if (numberOfHorns > 0) {
+                    activateHorn = true;
+                }
                 break;
         }
     }
 
+    /**
+     * key release triggers. Similar to the key pressed triggers but sets booleans to false.
+     *
+     * @param e
+     */
     public void triggerKeyRelease(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_UP:
@@ -186,23 +197,43 @@ public class Player extends Actor implements KeyboardControllable {
         }
     }
 
+    /**
+     * Player collision logic. Handles picking up powerups, hitting obstacles, and other motorists.
+     *
+     * @param a
+     */
     public void collision(Actor a) {
-
+        //if hitting a wrench, collect it and increase health.
         if (a instanceof Wrench) {
             Wrench wrench = (Wrench) a;
             health += wrench.getHealingValue();
+            if (health > 100) health = 100;
+            score += wrench.getPointValue();
             wrench.setMarkedForRemoval(true);
+            playSound("sounds/wrench.wav");
+        }
+
+        //collect airhorn powerups. Max of 1. If player already has 1, collect points.
+        if (a instanceof AirHorn) {
+            AirHorn airHorn = (AirHorn) a;
+            if (numberOfHorns == 0) numberOfHorns = 1;
+            else if (numberOfHorns == 1) score += airHorn.getPointValue();
+            airHorn.setMarkedForRemoval(true);
+            playSound("sounds/hornpickup.wav");
         }
 
         //if player hits a moose
         if (a instanceof Moose) {
             Moose moose = (Moose) a;
 
-            if (!moose.isHit()) {
+            if (!moose.isHit()) { //if moose is not already hit, flag hit, reduce points to 0, play random crash, lose health/speed and veer.
+                moose.setHit(true);
+                moose.setPointValue(0);
+                playSound("sounds/crash" + Utils.randInt(0, 9) + ".wav");
                 health -= moose.getDamageValue();
-                speed -= 1;
-                if (posX > a.getPosX()) vx += 2;
-                else vx -= 2;
+                speed *= 0.9;
+                if (posX + width / 2 > a.getPosX() + a.getWidth() / 2) vx += Utils.randFloat(3,6);
+                else vx -= Utils.randFloat(3,6);
             }
         }
 
@@ -210,10 +241,11 @@ public class Player extends Actor implements KeyboardControllable {
         if (a instanceof Pothole) {
             Pothole pothole = (Pothole) a;
 
-            if (!pothole.isHit()) {
-                playSound("sounds/pothole.wav");
-                health -= pothole.getDamageValue();
+            if (!pothole.isHit()) { //if pothole not already hit, mark as hit, set points to 0, make random pothole sound, and lose health
                 pothole.setHit(true);
+                pothole.setPointValue(0);
+                playSound("sounds/pothole" + Utils.randInt(0, 6) + ".wav");
+                health -= pothole.getDamageValue();
             }
         }
 
@@ -221,11 +253,11 @@ public class Player extends Actor implements KeyboardControllable {
         if (a instanceof Motorist) {
             Motorist motorist = (Motorist) a;
 
-            if (!motorist.isInAccident()) {
-                playSound("sounds/crash" + Utils.randInt(0, 9) + ".wav");
-                health -= motorist.getDamageValue();
+            if (!motorist.isInAccident()) { //if motorist not already in accident, mark them as in accident, set point value to 0, random crash sound, lose health
                 motorist.setInAccident(true);
                 motorist.setPointValue(0);
+                playSound("sounds/crash" + Utils.randInt(0, 9) + ".wav");
+                health -= motorist.getDamageValue();
             }
 
             if (posY > motorist.getPosY() + motorist.getHeight() - speed) { //if motorist in front
@@ -257,28 +289,32 @@ public class Player extends Actor implements KeyboardControllable {
     public void updateScore(int score) {
         this.score += score;
     }
+
     public int getScore() {
         return score;
     }
+
     public int getHealth() {
         return health;
     }
+
     public float getSpeed() {
         return this.speed;
     }
+
     public float getTopSpeed() {
         return topSpeed;
     }
+
     public boolean isActivateHorn() {
         return activateHorn;
     }
-    public void setActivateHorn(boolean activateHorn) {
-        this.activateHorn = activateHorn;
+
+    public int getNumberOfHorns() {
+        return numberOfHorns;
     }
-    public int getHornPowerUp() {
-        return hornPowerUp;
-    }
-    public void setHornPowerUp(int hornPowerUp) {
-        this.hornPowerUp = hornPowerUp;
+
+    public void setNumberOfHorns(int numberOfHorns) {
+        this.numberOfHorns = numberOfHorns;
     }
 }

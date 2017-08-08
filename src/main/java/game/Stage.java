@@ -7,6 +7,9 @@ import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Stage base class of which the MooseMadness class is based off of.
+ */
 public class Stage extends Canvas implements ImageObserver {
     public static final int WIDTH = 900;
     public static final int HEIGHT = 600;

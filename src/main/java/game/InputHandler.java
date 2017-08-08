@@ -50,12 +50,21 @@ public class InputHandler extends Thread {
 
 
             } else if (mooseMadness.state == Stage.GameState.OPTIONS) { // if in options
-
+                if (KeyEvent.VK_ESCAPE == keyPressed) { //if escape key go to menu
+                    mooseMadness.state = Stage.GameState.MENU;
+                    mooseMadness.game();
+                }
             } else if (mooseMadness.state == Stage.GameState.HIGHSCORES) { // if in highscores
-
+                if (KeyEvent.VK_ESCAPE == keyPressed) { //if escape key go to menu
+                    mooseMadness.state = Stage.GameState.MENU;
+                    mooseMadness.game();
+                }
             } else if (mooseMadness.state == Stage.GameState.PAUSE) { // if in pause
                 if (KeyEvent.VK_ESCAPE == keyPressed) {
                     mooseMadness.state = Stage.GameState.GAME;
+                    mooseMadness.game();
+                } else if (KeyEvent.VK_SPACE == keyPressed){
+                    mooseMadness.state = Stage.GameState.MENU;
                     mooseMadness.game();
                 }
 

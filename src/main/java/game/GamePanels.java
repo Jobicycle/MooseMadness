@@ -67,13 +67,22 @@ public class GamePanels extends Stage {
     }
 
     /**
+     * Prints the number of air horns the player has in the ui
+     */
+    public void printAirHorns() {
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setColor(Color.green);
+        g.drawString("Horns: " + player.getNumberOfHorns(), 20, 80);
+    }
+
+    /**
      * Prints time played on ui
      * @param sessionRunTime
      */
     public void printTimePlayed(float sessionRunTime) {
         g.setFont(new Font("Arial", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Time: " + String.format("%.02f", sessionRunTime), 20, 80);
+        g.drawString("Time: " + String.format("%.02f", sessionRunTime), 20, 100);
     }
 
     /**

@@ -6,7 +6,13 @@
 package game;
 
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
@@ -21,10 +27,10 @@ public class ScoreManager {
 
     private ArrayList<Integer> scores;
     private static final String HIGHSCORE_FILE = "scores.txt";
-/**
- * ScoreManager constructor. 
- * @param score int
- */
+    /**
+     * ScoreManager constructor.
+     * @param score int
+     */
     public ScoreManager(int score) {
 
         try {
@@ -47,10 +53,10 @@ public class ScoreManager {
         Collections.reverse(scores);
         saveScore(scores);
     }
-/**
- * saveScore - saves the score of a play to the text file
- * @param scores 
- */
+    /**
+     * saveScore - saves the score of a play to the text file
+     * @param scores
+     */
     private static void saveScore(ArrayList<Integer> scores) {
         BufferedWriter output = null;
         FileWriter fos = null;
@@ -63,7 +69,7 @@ public class ScoreManager {
                 output.write(j);
                 output.newLine();
             }
-            
+
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
@@ -76,10 +82,10 @@ public class ScoreManager {
             }
         }
     }
-/**
- * topThreeScores, returns the top three scores in an ArayList<Integer>
- * @return 
- */
+    /**
+     * topThreeScores, returns the top three scores in an ArayList<Integer>
+     * @return
+     */
     public ArrayList topThreeScores() {
         ArrayList<Integer> array = new ArrayList<Integer>();
         try {
@@ -88,30 +94,30 @@ public class ScoreManager {
             while (input.hasNextLine() && counter < 3) {
                 array.add(Integer.parseInt(input.nextLine()));
                 counter++;
-            }    
+            }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ScoreManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-            return array;
+        return array;
     }
-    
+
     /**
      * topTenScores, returns the top ten scores in an ArrayList<Integer>
-     * @return 
+     * @return
      */
     public ArrayList topTenScores(){
-         ArrayList<Integer> array = new ArrayList<Integer>();
+        ArrayList<Integer> array = new ArrayList<Integer>();
         try {
             Scanner input = new Scanner(new File(HIGHSCORE_FILE));
             int counter = 0;
             while (input.hasNextLine() && counter < 10) {
                 array.add(Integer.parseInt(input.nextLine()));
                 counter++;
-            }    
+            }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ScoreManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-            return array;
+        return array;
     }
 
 }

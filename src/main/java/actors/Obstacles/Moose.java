@@ -3,14 +3,18 @@ package actors.Obstacles;
 import actors.Actor;
 import actors.Player;
 import game.Stage;
+import game.Utils;
 
+/**
+ * Moose actor. Acts as an obstacle that the player must try to avoid.
+ */
 public class Moose extends Actor {
-    private int pointValue = 50; // point value if moose is not hit by player (clears screen)
-    private int damageValue = 5; //how much damage is done
-    private float weight = 2f; //weight determines how much speed is reduce when the moose is hit
-    private boolean hit = false;
+    private int pointValue = 50; //value of a moose when it clears screen and is not hit by player
+    private int damageValue = 7; //damage a moose does to the player
+    private boolean hit = false; //hit flag
 
     /**
+     * Moose constructor.
      * @param stage
      */
     public Moose(Stage stage) {
@@ -22,7 +26,7 @@ public class Moose extends Actor {
     }
 
     /**
-     *
+     * Moose sprite and movement updating
      */
     public void update() {
         if (!hit) {
@@ -32,7 +36,8 @@ public class Moose extends Actor {
     }
 
     /**
-     *
+     * Moose speed updater. Moose move at a speed assigned by the manager and once hit will quickly
+     * reduce their speed to settle on the road.
      */
     private void updateSpeed() {
         posX += vx;
@@ -56,68 +61,35 @@ public class Moose extends Actor {
 
     }
 
-    /**
-     * @param a
-     */
-    public void collision(Actor a) {
-        //if moose hits player, mark as hit, reduce point value and change sprite
-        if (a instanceof Player) {
-            this.setHit(true);
-            pointValue = 0;
-        }
-
-        if (a instanceof Motorist) {
-            this.setHit(true);
-        }
-    }
-
-
-    /**
-     * @return
-     */
     public int getPointValue() {
         return pointValue;
     }
 
-    /**
-     * @return
-     */
+    public void setPointValue(int pointValue) {
+        this.pointValue = pointValue;
+    }
+
     public int getDamageValue() {
         return damageValue;
     }
 
-    /**
-     * @return
-     */
     public boolean isHit() {
         return hit;
     }
 
     /**
+     * setHit method. When being set to true, a random moose sound is played and the sprite is changed to
+     * a death picture.
      * @param hit
      */
     public void setHit(boolean hit) {
         if (hit && !this.isHit()) {
-            playSound("sounds/moosehit.wav");
+            playSound("sounds/moose" + Utils.randInt(0, 2) + ".wav");
             sprites[0] = "obstacles/dmoose0.png";
             sprites[1] = "obstacles/dmoose1.png";
             sprites[2] = "obstacles/dmoose2.png";
         }
 
         this.hit = hit;
-    }
-
-    /**
-     * @return
-     */
-    public float getWeight() {
-        return weight;
-    }
-
-    /**
-     * @param weight
-     */
-    public void setWeight(float weight) {
-        this.weight = weight;
     }
 }

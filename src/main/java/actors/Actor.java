@@ -6,8 +6,10 @@ import game.Stage;
 import java.awt.*;
 
 
+/**
+ * Base class for all game actors
+ */
 public class Actor {
-
     private static final int POINT_VALUE = 0;
     protected float vx;
     protected float vy;
@@ -33,6 +35,9 @@ public class Actor {
         update();
     }
 
+    /**
+     * cycle through the given images to give the appearance of animation
+     */
     public void updateSpriteAnimation() {
         time++;
 
@@ -42,6 +47,10 @@ public class Actor {
         }
     }
 
+    /**
+     * play a wav file once
+     * @param name
+     */
     public void playSound(final String name) {
         new Thread(new Runnable() {
             public void run() {
@@ -51,6 +60,10 @@ public class Actor {
     }
 
 
+    /**
+     * paint the actor on the screen using given sprite, x, y, and stage variables.
+     * @param g
+     */
     public void paint(Graphics g) {
         g.drawImage(ResourceLoader.getInstance().getSprite(sprites[frame]), posX, posY, stage);
     }

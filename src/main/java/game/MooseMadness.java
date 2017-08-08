@@ -24,6 +24,7 @@ public class MooseMadness extends Stage implements KeyListener {
     public List<Actor> obstacles;
     public List<Actor> motorists;
     public List<Actor> powerUps;
+    public List<Actor> clouds;
 
     private BufferedImage background, backgroundTile; //background cache
     private int backgroundY; //background cache position
@@ -32,9 +33,10 @@ public class MooseMadness extends Stage implements KeyListener {
     private PowerUpManager powerUpManager;
     private ObstacleManager obstacleManager;
     private TrafficManager trafficManager;
+    private CloudManager cloudManager;
 
     /**
-     *
+     * Main game class
      */
     public MooseMadness() {
         //init the UI
@@ -68,21 +70,23 @@ public class MooseMadness extends Stage implements KeyListener {
         strategy = getBufferStrategy();
         requestFocus();
         player = new Player(this); //add player
-        Utils.loopMusic("musicloop.wav");
+        Utils.loopMusic("musicloop.wav"); //stomp stomp stomp music
         game();
     }
 
     /**
-     *
+     * initialize the world. Create actor lists and managers, player, and the background tile.
      */
     public void initWorld() {
         //add powerup, obstacle, and traffic managers and lists
         obstacles = new ArrayList<Actor>();
         motorists = new ArrayList<Actor>();
         powerUps = new ArrayList<Actor>();
+        clouds = new ArrayList<Actor>();
         trafficManager = new TrafficManager(this, motorists);
         obstacleManager = new ObstacleManager(this, obstacles);
         powerUpManager = new PowerUpManager(this, powerUps);
+        cloudManager = new CloudManager(this, clouds);
         player = new Player(this); //add player
 
         //load background
@@ -95,7 +99,7 @@ public class MooseMadness extends Stage implements KeyListener {
     }
 
     /**
-     * main game loop
+     * main game loop. Allows player to cycle through different screens or is forced to gameover screen when necessary.
      */
     public void game() {
         Graphics g = strategy.getDrawGraphics();
@@ -104,10 +108,6 @@ public class MooseMadness extends Stage implements KeyListener {
         switch (state) {
             case MENU:
                 gamePanels.printMainMenu();
-                break;
-
-            case OPTIONS:
-//                gamePanels.printOptions();
                 break;
 
             case HIGHSCORES:
@@ -126,6 +126,7 @@ public class MooseMadness extends Stage implements KeyListener {
             case GAME:
                 usedTime = 0;
 
+                //game over loop, updates actors, paints actors, tracks session run time, and calls calculate sleep time to keep frames at normal rate.
                 gameLoop:
                 while (isVisible()) {
                     gameUpdate();
@@ -133,10 +134,10 @@ public class MooseMadness extends Stage implements KeyListener {
                     sessionRunTime += 0.01;
                     Utils.calculateSleepTime(usedTime, DESIRED_FPS);
 
-                    if (state == GameState.GAMEOVER) {
+                    if (state == GameState.GAMEOVER) { // break out of game loop, change state to game over, then re-enter game() method.
                         game();
                         break gameLoop;
-                    } else if (state == GameState.PAUSE) {
+                    } else if (state == GameState.PAUSE) { // break out of game loop, change state to pause, then re-enter game() method.
                         game();
                         break gameLoop;
                     }
@@ -145,11 +146,15 @@ public class MooseMadness extends Stage implements KeyListener {
         }
     }
 
+    /**
+     * gameUpdate method handles updating all the actors in the game, checking for collisions, and asking managers if actors should be created.
+     */
     private void gameUpdate() {
         //iterate through current obstacle list, check for collisions, remove unnecessary obstacles, update obstacle position based on player speed.
         updateActors(obstacles);
         updateActors(motorists);
         updateActors(powerUps);
+        updateActors(clouds);
 
         //check for player collisions between obstacles, motorists, and powerUps
         Utils.checkCollision(player, obstacles);
@@ -162,18 +167,23 @@ public class MooseMadness extends Stage implements KeyListener {
             Utils.checkCollision(motorist, motorists);
         }
 
-        //check for super horn
-        if (player.isActivateHorn() && player.getHornPowerUp() > 0) {
+        //check for air horn activation
+        if (player.isActivateHorn() && player.getNumberOfHorns() > 0) {
             Utils.playSound("sounds/horn.wav");
             applyHorn(motorists);
             applyHorn(obstacles);
-
+            player.setNumberOfHorns(0);
         }
 
-        //ask managers if objects should be added to object lists
-        obstacleManager.randomMoose(sessionRunTime);
+        //ask managers if objects should be added to object lists. Only add
+        //powerups if player is driving higher than half speed + 1
+        if (player.getSpeed() > player.getTopSpeed() / 2 + 1) {
+            powerUpManager.randomWrench(sessionRunTime);
+            powerUpManager.randomAirHorn(sessionRunTime);
+        }
+        obstacleManager.randomObstacle(sessionRunTime);
         trafficManager.randomMotorist(sessionRunTime);
-        powerUpManager.randomWrench(sessionRunTime);
+        cloudManager.randomCloud(sessionRunTime);
 
         if (player.getHealth() <= 0) { //if game over
             state = GameState.GAMEOVER;
@@ -181,6 +191,9 @@ public class MooseMadness extends Stage implements KeyListener {
     }
 
     /**
+     * updateActors function takes in actor lists, checks for collisions, and removes flagged actors.
+     * It also adjusts actor Y position according to player speed.
+     *
      * @param actorList
      */
     private void updateActors(List<Actor> actorList) {
@@ -200,6 +213,12 @@ public class MooseMadness extends Stage implements KeyListener {
         }
     }
 
+    /**
+     * applyHorn method used to tell Moose and Motorists actors to move left or right according to
+     * their position relative to the player.
+     *
+     * @param actorList
+     */
     private void applyHorn(List<Actor> actorList) {
         for (Actor actor : actorList) {
             if (actor instanceof Moose || actor instanceof Motorist) {
@@ -215,7 +234,7 @@ public class MooseMadness extends Stage implements KeyListener {
     }
 
     /**
-     *
+     * paintWorld draws the background, all actors, and ui.
      */
     public void paintWorld(Graphics g) {
         //init image to background
@@ -242,6 +261,10 @@ public class MooseMadness extends Stage implements KeyListener {
         //paint the player
         player.paint(g);
 
+        for (Actor cloud : clouds) {
+            cloud.paint(g);
+        }
+
         backgroundY -= (int) player.getSpeed();
         if (backgroundY < 0) {
             backgroundY = backgroundTile.getHeight();
@@ -250,15 +273,13 @@ public class MooseMadness extends Stage implements KeyListener {
         gamePanels.printHealth();
         gamePanels.printScore();
         gamePanels.printSpeed();
+        gamePanels.printAirHorns();
         gamePanels.printTimePlayed(sessionRunTime);
 
         //swap buffer
         strategy.show();
     }
 
-    /**
-     * @param e
-     */
     public void keyPressed(KeyEvent e) {
         InputHandler inputHandler = new InputHandler(this, player);
         inputHandler.event = e;
@@ -266,9 +287,6 @@ public class MooseMadness extends Stage implements KeyListener {
         inputHandler.start();
     }
 
-    /**
-     * @param e
-     */
     public void keyReleased(KeyEvent e) {
         InputHandler inputHandler = new InputHandler(this, player);
         inputHandler.event = e;
@@ -276,9 +294,6 @@ public class MooseMadness extends Stage implements KeyListener {
         inputHandler.start();
     }
 
-    /**
-     * @param e
-     */
     public void keyTyped(KeyEvent e) {
     }
 }

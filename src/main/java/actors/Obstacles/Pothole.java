@@ -5,35 +5,35 @@ import actors.Player;
 import game.Stage;
 import game.Utils;
 
+/**
+ * Pothole class. Potholes act as stationary obstacles that the player must try to avoid.
+ * They also cause motorists to drive erratically when being passed over.
+ */
 public class Pothole extends Actor {
-    private int pointValue = 25;
-    private int damageValue = 2;
-    private boolean hit = false;
+    private int pointValue = 25; //point value when a pothole is cleared off the screen without being hit
+    private int damageValue = 2; //damage done to player when hit
+    private boolean hit = false; //hit flag
 
+    /**
+     * Pothole constructor
+     *
+     * @param canvas
+     */
     public Pothole(Stage canvas) {
         super(canvas);
-        sprites = new String[]{"obstacles/pothole" + Utils.randInt(0,1) + ".png"};
+        sprites = new String[]{"obstacles/pothole" + Utils.randInt(0, 1) + ".png"};
         width = 30;
         height = 40;
     }
 
+    /**
+     * Pothole updater. Potholes are removed when they pass beyond the bottom of the screen.
+     */
     public void update() {
-        super.updateSpriteAnimation();
-
         if (posY >= stage.getHeight()) {
             setMarkedForRemoval(true);
         }
     }
-
-    public void collision(Actor a) {
-        if (a instanceof Player) {
-            if (!isHit()) {
-                hit = true;
-                pointValue = 0;
-            }
-        }
-    }
-
 
     public int getPointValue() {
         return pointValue;

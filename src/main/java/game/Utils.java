@@ -9,6 +9,8 @@ import java.util.Random;
 public class Utils {
 
     /**
+     * checkCollision method used to determine if an actor has collided with another actor.
+     * Uses the base class Rectangle and its method "intersects" to determine if collision has occured.
      * @param actor
      * @param otherActorList
      */
@@ -30,6 +32,8 @@ public class Utils {
     }
 
     /**
+     * safeSpawn method determines if it is ok to place a motorist at a given location.
+     * This helps to avoid having two motorists created on top of one another.
      * @param actor
      * @param otherActorList
      */
@@ -44,6 +48,7 @@ public class Utils {
     }
 
     /**
+     * randInt method to quickly generate a random integer between a range.
      * @param min
      * @param max
      * @return
@@ -54,6 +59,7 @@ public class Utils {
     }
 
     /**
+     * randFloat method similar to the randInt method but returns a float.
      * @param min
      * @param max
      * @return
@@ -87,6 +93,7 @@ public class Utils {
     }
 
     /**
+     * wav looper to handle playing "pleasant" music loops.
      * @param name
      */
     public static void loopMusic(final String name) {
@@ -97,6 +104,11 @@ public class Utils {
         }).start();
     }
 
+
+    /**
+     * playSound method used to play a wav one time.
+     * @param name
+     */
     public static void playSound(final String name) {
         new Thread(new Runnable() {
             public void run() {
