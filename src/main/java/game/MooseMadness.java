@@ -225,6 +225,7 @@ public class MooseMadness extends Stage implements KeyListener {
         gamePanels.printHealth();
         gamePanels.printScore();
         gamePanels.printSpeed();
+        gamePanels.printTimePlayed(sessionRunTime);
 
         //swap buffer
         strategy.show();

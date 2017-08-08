@@ -34,13 +34,19 @@ public class GamePanels extends Stage {
     public void printSpeed() {
         g.setFont(new Font("Arial", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Speed: " + (int) player.getSpeed() * 10, 20, 40);
+        g.drawString("Speed: " + (int) player.getSpeed() * 20, 20, 40);
     }
 
     public void printHealth() {
         g.setFont(new Font("Arial", Font.PLAIN, 20));
         g.setColor(Color.green);
         g.drawString("Health: " + player.getHealth(), 20, 60);
+    }
+
+    public void printTimePlayed(float sessionRunTime) {
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        g.setColor(Color.green);
+        g.drawString("Time: " + String.format("%.02f", sessionRunTime), 20, 80);
     }
 
     public void printGameOver() {

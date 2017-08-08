@@ -92,7 +92,7 @@ public class Motorist extends Actor {
         }
 
         if (a instanceof Pothole) {
-            vx += Utils.randFloat(-1, 1);
+            vx += Utils.randFloat(-0.1f, 0.1f);
         }
     }
 
