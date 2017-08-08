@@ -15,16 +15,14 @@ public class Motorist extends Actor {
     public Motorist(Stage canvas) {
         super(canvas);
         randomCarNumber = Utils.randInt(0, 3);
-        sprites = new String[]{"car" + randomCarNumber + ".png"};
-        frameSpeed = 1;
-//        width = 60;
-//        height = 114;
+        sprites = new String[]{"cars/car" + randomCarNumber + ".png"};
+        frameSpeed = 1000;
         width = 54;
         height = 102;
     }
 
     public void update() {
-        super.updateSpriteAnimation();
+//        super.updateSpriteAnimation();
         updateSpeed();
     }
 
@@ -33,7 +31,7 @@ public class Motorist extends Actor {
         posY += vy;
 
         //if inAccident, slow car to a stop
-        if (inAccident && vy < 0) vy += 0.02f;
+        if (inAccident && vy < 0) vy += Utils.randFloat(0.01f, 0.1f);
         if (vy > 0 && vy < 0.1f) vy = 0;
 
         //remove car if it passes top or bottom of screen
@@ -47,20 +45,22 @@ public class Motorist extends Actor {
         }
 
         //prevent car from steering out of bounds
-        if (posX < 0 || posX + width >= stage.getWidth()) vx = -vx / 2;
+        if (posX < 0 || posX + width >= stage.getWidth()) {
+            this.setInAccident(true);
+            vx = -vx / 2;
+        }
         if (posX < 0) posX = 0;
         if (posX + width >= stage.getWidth()) posX = stage.getWidth() - width;
     }
 
+
     public void collision(Actor a) {
         if (a instanceof Motorist) {
             Motorist them = (Motorist) a;
-            sprites[0] = "car" + randomCarNumber + "b.png";
 
             if (!them.isInAccident()) {
                 them.setInAccident(true);
                 this.setInAccident(true);
-                playSound("crash" + Utils.randInt(0, 2) + ".wav");
             }
 
             if (posY > them.getPosY() + them.getHeight() - 5) { //if they are in front
@@ -83,7 +83,6 @@ public class Motorist extends Actor {
 
         if (a instanceof Moose) {
             Moose moose = (Moose) a;
-            sprites[0] = "car" + randomCarNumber + "b.png";
 
             if (!moose.isHit()) {
                 this.setInAccident(true);
@@ -92,11 +91,11 @@ public class Motorist extends Actor {
         }
 
         if (a instanceof Player) {
-            sprites[0] = "car" + randomCarNumber + "b.png";
+            this.setInAccident(true);
         }
 
         if (a instanceof Pothole) {
-            vx += Utils.randFloat(-0.1f, 0.1f);
+            vx += Utils.randFloat(-0.3f, 0.3f);
         }
     }
 
@@ -119,6 +118,10 @@ public class Motorist extends Actor {
     }
 
     public void setInAccident(boolean inAccident) {
+        if (this.isInAccident() == false) {
+            playSound("sounds/crash" + Utils.randInt(0, 9) + ".wav");
+            sprites[0] = "cars/car" + randomCarNumber + "b.png";
+        }
         this.inAccident = inAccident;
     }
 }

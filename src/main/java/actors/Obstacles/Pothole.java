@@ -12,9 +12,9 @@ public class Pothole extends Actor {
 
     public Pothole(Stage canvas) {
         super(canvas);
-        sprites = new String[]{"pothole" + Utils.randInt(0,1) + ".png"};
+        sprites = new String[]{"obstacles/pothole" + Utils.randInt(0,1) + ".png"};
         width = 30;
-        height = 55;
+        height = 40;
     }
 
     public void update() {
@@ -39,11 +39,19 @@ public class Pothole extends Actor {
         return pointValue;
     }
 
+    public void setPointValue(int pointValue) {
+        this.pointValue = pointValue;
+    }
+
     public int getDamageValue() {
         return damageValue;
     }
 
     public boolean isHit() {
         return hit;
+    }
+
+    public void setHit(boolean hit) {
+        this.hit = hit;
     }
 }

@@ -15,7 +15,7 @@ public class Moose extends Actor {
      */
     public Moose(Stage stage) {
         super(stage);
-        sprites = new String[]{"moose0.png", "moose1.png", "moose2.png"};
+        sprites = new String[]{"obstacles/moose0.png", "obstacles/moose1.png", "obstacles/moose2.png"};
         frameSpeed = 15;
         width = 50;
         height = 50;
@@ -62,27 +62,15 @@ public class Moose extends Actor {
     public void collision(Actor a) {
         //if moose hits player, mark as hit, reduce point value and change sprite
         if (a instanceof Player) {
-            if (!hit) {
-                playSound("moosehit.wav");
-                hit = true;
-                pointValue = 0;
-                sprites[0] = "dmoose0.png";
-                sprites[1] = "dmoose1.png";
-                sprites[2] = "dmoose2.png";
-
-            }
+            this.setHit(true);
+            pointValue = 0;
         }
 
         if (a instanceof Motorist) {
-            if (!hit) {
-                playSound("moosehit.wav");
-                hit = true;
-                sprites[0] = "dmoose0.png";
-                sprites[1] = "dmoose1.png";
-                sprites[2] = "dmoose2.png";
-            }
+            this.setHit(true);
         }
     }
+
 
     /**
      * @return
@@ -109,6 +97,13 @@ public class Moose extends Actor {
      * @param hit
      */
     public void setHit(boolean hit) {
+        if (hit && !this.isHit()) {
+            playSound("sounds/moosehit.wav");
+            sprites[0] = "obstacles/dmoose0.png";
+            sprites[1] = "obstacles/dmoose1.png";
+            sprites[2] = "obstacles/dmoose2.png";
+        }
+
         this.hit = hit;
     }
 

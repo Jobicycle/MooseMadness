@@ -17,7 +17,6 @@ public class Actor {
     protected int width;
     protected int frame;
     protected int frameSpeed;
-    protected int actorSpeed;
     protected int time;
     protected String[] sprites = null;
     protected Stage stage = null;
@@ -27,7 +26,6 @@ public class Actor {
         this.stage = canvas;
         frame = 0;
         frameSpeed = 1;
-        actorSpeed = 10;
         time = 0;
     }
 

@@ -68,6 +68,7 @@ public class MooseMadness extends Stage implements KeyListener {
         strategy = getBufferStrategy();
         requestFocus();
         player = new Player(this); //add player
+        Utils.loopMusic("musicloop.wav");
         game();
     }
 
@@ -85,7 +86,7 @@ public class MooseMadness extends Stage implements KeyListener {
         player = new Player(this); //add player
 
         //load background
-        backgroundTile = ResourceLoader.getInstance().getSprite("road0.png");
+        backgroundTile = ResourceLoader.getInstance().getSprite("road/road0.png");
         background = ResourceLoader.createCompatible(WIDTH, HEIGHT + backgroundTile.getHeight(), Transparency.OPAQUE);
         Graphics2D g = (Graphics2D) background.getGraphics();
         g.setPaint(new TexturePaint(backgroundTile, new Rectangle(0, 0, backgroundTile.getWidth(), backgroundTile.getHeight())));
@@ -163,7 +164,7 @@ public class MooseMadness extends Stage implements KeyListener {
 
         //check for super horn
         if (player.isActivateHorn() && player.getHornPowerUp() > 0) {
-            Utils.playSound("horn.wav");
+            Utils.playSound("sounds/horn.wav");
             applyHorn(motorists);
             applyHorn(obstacles);
 

@@ -32,10 +32,9 @@ public class Player extends Actor implements KeyboardControllable {
     public Player(Stage stage) {
         super(stage);
 
-        sprites = new String[]{"car0.png"};
+        sprites = new String[]{"cars/car0.png"};
         frame = 0;
-        frameSpeed = 10;
-        actorSpeed = 10;
+        frameSpeed = 1000;
 
 //        width = 60;
 //        height = 114;
@@ -207,23 +206,23 @@ public class Player extends Actor implements KeyboardControllable {
             }
         }
 
+        //if player hits pothole
         if (a instanceof Pothole) {
             Pothole pothole = (Pothole) a;
 
             if (!pothole.isHit()) {
-                playSound("pothole.wav");
+                playSound("sounds/pothole.wav");
                 health -= pothole.getDamageValue();
-                speed -= 0.2f;
+                pothole.setHit(true);
             }
         }
 
-
-//        if player hits a motorist
+        //if player hits a motorist
         if (a instanceof Motorist) {
-            playSound("crash" + Utils.randInt(0, 2) + ".wav");
             Motorist motorist = (Motorist) a;
 
             if (!motorist.isInAccident()) {
+                playSound("sounds/crash" + Utils.randInt(0, 9) + ".wav");
                 health -= motorist.getDamageValue();
                 motorist.setInAccident(true);
                 motorist.setPointValue(0);
@@ -255,47 +254,30 @@ public class Player extends Actor implements KeyboardControllable {
         }
     }
 
-    //TODO tune to projectile
-//    private void fire() {
-//        Actor shot = new Shot(stage);
-//        shot.setX(posX);
-//        shot.setY(posY - shot.getHeight());
-//        stage.actors.add(shot);
-//        playSound("photon.wav");
-//    }
-
     public void updateScore(int score) {
         this.score += score;
     }
-
     public int getScore() {
         return score;
     }
-
     public int getHealth() {
         return health;
     }
-
     public float getSpeed() {
         return this.speed;
     }
-
     public float getTopSpeed() {
         return topSpeed;
     }
-
     public boolean isActivateHorn() {
         return activateHorn;
     }
-
     public void setActivateHorn(boolean activateHorn) {
         this.activateHorn = activateHorn;
     }
-
     public int getHornPowerUp() {
         return hornPowerUp;
     }
-
     public void setHornPowerUp(int hornPowerUp) {
         this.hornPowerUp = hornPowerUp;
     }
