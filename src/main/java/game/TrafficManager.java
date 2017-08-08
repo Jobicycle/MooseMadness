@@ -17,9 +17,9 @@ public class TrafficManager {
     }
 
     public void randomMotorist(float sessionRunTime) {
-        maxMotorists = (int) sessionRunTime / 10 + 1;
+        maxMotorists = (int) sessionRunTime / 15 + 1;
 
-        if (motorists.size() < maxMotorists  && sessionRunTime > 1) {
+        if (motorists.size() < maxMotorists && sessionRunTime > 1) {
             Motorist motorist = new Motorist(stage);
             int lane;
 
@@ -32,7 +32,7 @@ public class TrafficManager {
             }
 
             lane = Utils.randInt(0, 5);
-            motorist.setPosX(laneXPos[lane] - motorist.getWidth() / 2 + Utils.randInt(-motorist.getWidth()/2, motorist.getWidth()));
+            motorist.setPosX(laneXPos[lane] - motorist.getWidth() / 2 + Utils.randInt(-motorist.getWidth() / 2, motorist.getWidth()) / 2);
             if (Utils.safeSpawn(motorist, motorists)) motorists.add(motorist);
         }
     }

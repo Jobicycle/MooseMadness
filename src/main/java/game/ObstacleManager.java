@@ -18,7 +18,7 @@ public class ObstacleManager {
 
     public void randomMoose(float sessionRunTime) {
         maxObstacles = (int) sessionRunTime / 15 + 1;
-        int randObstacle = Utils.randInt(1, 2);
+        int randObstacle = Utils.randInt(1, 3);
 
         if (obstacles.size() < maxObstacles && sessionRunTime > 1) {
             if (randObstacle == 1) {
@@ -35,7 +35,7 @@ public class ObstacleManager {
                 moose.setVy(Utils.randFloat(0f, 2f));
                 obstacles.add(moose);
 
-            } else if (randObstacle == 2) {
+            } else if (randObstacle > 1) {
                 Actor pothole = new Pothole(stage);
                 pothole.setPosX(Utils.randInt(142 + pothole.getWidth(), 768 - pothole.getWidth()));
                 pothole.setPosY(-pothole.getHeight());
