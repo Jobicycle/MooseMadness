@@ -1,6 +1,8 @@
 package game;
 
 import actors.Actor;
+import actors.Obstacles.Moose;
+import actors.Obstacles.Motorist;
 import actors.Player;
 
 import javax.swing.*;
@@ -159,6 +161,14 @@ public class MooseMadness extends Stage implements KeyListener {
             Utils.checkCollision(motorist, motorists);
         }
 
+        //check for super horn
+        if (player.isActivateHorn() && player.getHornPowerUp() > 0) {
+            Utils.playSound("horn.wav");
+            applyHorn(motorists);
+            applyHorn(obstacles);
+
+        }
+
         //ask managers if objects should be added to object lists
         obstacleManager.randomMoose(sessionRunTime);
         trafficManager.randomMotorist(sessionRunTime);
@@ -189,6 +199,20 @@ public class MooseMadness extends Stage implements KeyListener {
         }
     }
 
+    private void applyHorn(List<Actor> actorList) {
+        for (Actor actor : actorList) {
+            if (actor instanceof Moose || actor instanceof Motorist) {
+                if (player.getPosY() > actor.getPosY()) {
+                    if (player.getPosX() + player.getWidth() / 2 > actor.getPosX()) {
+                        actor.setVx(Utils.randFloat(-3, -2));
+                    } else {
+                        actor.setVx(Utils.randFloat(2, 3));
+                    }
+                }
+            }
+        }
+    }
+
     /**
      *
      */
@@ -210,7 +234,7 @@ public class MooseMadness extends Stage implements KeyListener {
         }
 
         //paint the powerups
-        for (Actor powerUp: powerUps) {
+        for (Actor powerUp : powerUps) {
             powerUp.paint(g);
         }
 

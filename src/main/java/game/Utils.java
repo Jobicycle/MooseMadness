@@ -89,10 +89,18 @@ public class Utils {
     /**
      * @param name
      */
-    public void loopMusic(final String name) {
+    public static void loopMusic(final String name) {
         new Thread(new Runnable() {
             public void run() {
                 ResourceLoader.getInstance().getSound(name).loop();
+            }
+        }).start();
+    }
+
+    public static void playSound(final String name) {
+        new Thread(new Runnable() {
+            public void run() {
+                ResourceLoader.getInstance().getSound(name).play();
             }
         }).start();
     }

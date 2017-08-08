@@ -11,10 +11,11 @@ import java.awt.event.KeyEvent;
 
 public class Player extends Actor implements KeyboardControllable {
 
-    private boolean up, down, left, right, eBrake;
+    private boolean up, down, left, right, eBrake, activateHorn;
     private int health = 100;
     private float speed = 4f;
     private int score = 0;
+    private int hornPowerUp = 1;
     private int[] roadBounds = {142, 768};
 
     //handling specs
@@ -50,7 +51,7 @@ public class Player extends Actor implements KeyboardControllable {
         maxHandling = 5f;
         eBrakePower = 0.3f;
 
-        up = down = left = right = eBrake = false;
+        up = down = left = right = eBrake = activateHorn = false;
     }
 
     /**
@@ -157,6 +158,9 @@ public class Player extends Actor implements KeyboardControllable {
                     eBrake = true;
                 }
                 break;
+            case KeyEvent.VK_CONTROL:
+                activateHorn = true;
+                break;
         }
     }
 
@@ -177,6 +181,9 @@ public class Player extends Actor implements KeyboardControllable {
             case KeyEvent.VK_SPACE:
                 eBrake = false;
                 break;
+            case KeyEvent.VK_CONTROL:
+                activateHorn = false;
+                break;
         }
     }
 
@@ -196,7 +203,8 @@ public class Player extends Actor implements KeyboardControllable {
                 health -= moose.getDamageValue();
                 speed -= 1;
                 if (posX > a.getPosX()) vx += 2;
-                else vx -= 2;}
+                else vx -= 2;
+            }
         }
 
         if (a instanceof Pothole) {
@@ -212,7 +220,7 @@ public class Player extends Actor implements KeyboardControllable {
 
 //        if player hits a motorist
         if (a instanceof Motorist) {
-            playSound("crash" + Utils.randInt(0,2) + ".wav");
+            playSound("crash" + Utils.randInt(0, 2) + ".wav");
             Motorist motorist = (Motorist) a;
 
             if (!motorist.isInAccident()) {
@@ -264,33 +272,31 @@ public class Player extends Actor implements KeyboardControllable {
         return score;
     }
 
-    public boolean iseBrake() {
-        return eBrake;
-    }
-
     public int getHealth() {
         return health;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
     }
 
     public float getSpeed() {
         return this.speed;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
     public float getTopSpeed() {
         return topSpeed;
     }
 
-    public void setTopSpeed(float topSpeed) {
-        this.topSpeed = topSpeed;
+    public boolean isActivateHorn() {
+        return activateHorn;
     }
 
+    public void setActivateHorn(boolean activateHorn) {
+        this.activateHorn = activateHorn;
+    }
 
+    public int getHornPowerUp() {
+        return hornPowerUp;
+    }
+
+    public void setHornPowerUp(int hornPowerUp) {
+        this.hornPowerUp = hornPowerUp;
+    }
 }
