@@ -21,8 +21,8 @@ public class Moose extends Actor {
         super(stage);
 //        sprites = new String[]{"obstacles/moose0.png", "obstacles/moose1.png", "obstacles/moose2.png"};
         frameSpeed = 15;
-        width = 50;
-        height = 50;
+        width = 40;
+        height = 40;
     }
 
     /**

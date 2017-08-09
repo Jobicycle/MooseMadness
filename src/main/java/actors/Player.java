@@ -52,7 +52,7 @@ public class Player extends Actor implements KeyboardControllable {
         acceleration = 0.04f;
         handling = 0.1f;
         maxHandling = 5f;
-        eBrakePower = 0.3f;
+        eBrakePower = 0.1f;
 
         up = down = left = right = eBrake = activateHorn = false;
     }
@@ -74,6 +74,7 @@ public class Player extends Actor implements KeyboardControllable {
         else if (health <= 60) sprites[0] = "cars/pcar3.png";
         else if (health <= 80) sprites[0] = "cars/pcar2.png";
         else if (health < 100) sprites[0] = "cars/pcar1.png";
+        else sprites[0] = "cars/car0.png";
     }
 
 
@@ -165,6 +166,7 @@ public class Player extends Actor implements KeyboardControllable {
             case KeyEvent.VK_SPACE:
                 if (!eBrake) {
                     eBrake = true;
+                    playSound("sounds/eBrake.wav");
                 }
                 break;
             case KeyEvent.VK_CONTROL:

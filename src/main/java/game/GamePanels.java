@@ -44,7 +44,7 @@ public class GamePanels extends Stage {
         g.setFont(new Font("Consolas", Font.PLAIN, 30));
         g.setColor(Color.green);
         g.drawString("Score: ", 20, 30);
-        g.setColor(Color.red);
+        g.setColor(Color.white);
         g.drawString("" + player.getScore(), 130, 30);
     }
 
@@ -52,9 +52,11 @@ public class GamePanels extends Stage {
      * printHealth() - used to print health during game
      */
     public void printHealth() {
-        g.setFont(new Font("Consolas", Font.PLAIN, 20));
+        g.setFont(new Font("Consolas", Font.PLAIN, 30));
         g.setColor(Color.green);
-        g.drawString("Health: " + player.getHealth(), 20, 50);
+        g.drawString("Health: ", 20, 60);
+        g.setColor(Color.red);
+        g.drawString("" + player.getHealth(), 140, 60);
     }
 
     /**
@@ -63,7 +65,7 @@ public class GamePanels extends Stage {
     public void printSpeed() {
         g.setFont(new Font("Consolas", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Speed: " + (int) player.getSpeed() * 20, 20, 70);
+        g.drawString("Speed: " + (int) player.getSpeed() * 20, 20, 80);
     }
 
     /**
@@ -72,7 +74,7 @@ public class GamePanels extends Stage {
     public void printAirHorns() {
         g.setFont(new Font("Consolas", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Horns: " + player.getNumberOfHorns(), 20, 90);
+        g.drawString("Horns: " + player.getNumberOfHorns(), 20, 100);
     }
 
     /**
@@ -82,7 +84,7 @@ public class GamePanels extends Stage {
     public void printTimePlayed(float sessionRunTime) {
         g.setFont(new Font("Consolas", Font.PLAIN, 20));
         g.setColor(Color.green);
-        g.drawString("Time: " + String.format("%.02f", sessionRunTime), 20, 110);
+        g.drawString("Time: " + String.format("%.02f", sessionRunTime), 20, 120);
     }
 
     /**

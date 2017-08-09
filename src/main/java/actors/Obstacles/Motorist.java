@@ -128,7 +128,7 @@ public class Motorist extends Actor {
         }
 
         if (a instanceof Pothole) { //if hitting a pothole and not in an accident , randomly altar vx
-            if (!inAccident) vx += Utils.randFloat(-0.4f, 0.4f);
+            if (!inAccident) vx += Utils.randFloat(-0.3f, 0.3f);
         }
     }
 
