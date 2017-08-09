@@ -35,7 +35,7 @@ public class TrafficManager {
      * @param sessionRunTime
      */
     public void randomMotorist(float sessionRunTime) {
-        maxMotorists = (int) sessionRunTime / 15 + 1; //limit motorists to 1 then +1 every 15 seconds.
+        maxMotorists = (int) sessionRunTime / 10 + 1; //limit motorists to 1 then +1 every 15 seconds.
 
         if (motorists.size() < maxMotorists && sessionRunTime > 1) { //if not at max motorists and past 1 sec game play.
             Motorist motorist = new Motorist(stage);

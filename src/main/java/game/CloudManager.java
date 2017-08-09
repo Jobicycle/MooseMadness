@@ -27,10 +27,12 @@ public class CloudManager {
      * @param sessionRunTime
      */
     public void randomCloud(float sessionRunTime) {
-        int cloudSpawnUpper = 100 - (int) sessionRunTime;
-        if (cloudSpawnUpper < 20) cloudSpawnUpper = 20;
-
-        if (Utils.randInt(1, cloudSpawnUpper) == 1) {
+        int cloudSpawnUpper = (int) sessionRunTime / 10 + 1;
+//        int cloudSpawnUpper = 150 - (int) sessionRunTime;
+//        if (cloudSpawnUpper < 20) cloudSpawnUpper = 20;
+//
+//        if (Utils.randInt(1, cloudSpawnUpper) == 1) {
+        if (clouds.size() < cloudSpawnUpper) {
             Actor cloud = new Cloud(stage);
             cloud.setPosX(Utils.randInt(0, stage.getWidth()));
             cloud.setPosY((int) Utils.randFloat(-stage.getHeight(), 0 - cloud.getHeight()));

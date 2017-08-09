@@ -33,7 +33,7 @@ public class ObstacleManager {
      * @param sessionRunTime
      */
     public void randomObstacle(float sessionRunTime) {
-        maxObstacles = (int) sessionRunTime / 15 + 1; //limit max obstacles to how long game session has been underway.
+        maxObstacles = (int) sessionRunTime / 10 + 1; //limit max obstacles to how long game session has been underway.
         int randObstacle = Utils.randInt(1, 3); //choose a random number to decide on which obstacle to spawn.
 
         if (obstacles.size() < maxObstacles && sessionRunTime > 2) { //if under obstacle limit and 2 seconds have passed since start of game.

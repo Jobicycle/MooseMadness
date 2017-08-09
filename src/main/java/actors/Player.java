@@ -50,7 +50,7 @@ public class Player extends Actor implements KeyboardControllable {
 
         topSpeed = 5f;
         acceleration = 0.04f;
-        handling = 0.1f;
+        handling = 0.15f;
         maxHandling = 5f;
         eBrakePower = 0.1f;
 
@@ -78,7 +78,7 @@ public class Player extends Actor implements KeyboardControllable {
         else if (health <= 40) sprites[0] = "cars/pcar4.png";
         else if (health <= 60) sprites[0] = "cars/pcar3.png";
         else if (health <= 80) sprites[0] = "cars/pcar2.png";
-        else if (health < 100) sprites[0] = "cars/pcar1.png";
+        else if (health <= 95) sprites[0] = "cars/pcar1.png";
         else sprites[0] = "cars/car0.png";
     }
 
@@ -265,7 +265,9 @@ public class Player extends Actor implements KeyboardControllable {
                 pothole.setHit(true);
                 pothole.setPointValue(0);
                 playSound("sounds/pothole" + Utils.randInt(0, 6) + ".wav");
-                health -= pothole.getDamageValue();
+                // make it so potholes cannot deal the killing blow
+                if (health > pothole.getDamageValue() + 1) health -= pothole.getDamageValue();
+                else health = 1;
             }
         }
 
@@ -273,11 +275,12 @@ public class Player extends Actor implements KeyboardControllable {
         if (a instanceof Motorist) {
             Motorist motorist = (Motorist) a;
 
-            if (!motorist.isInAccident()) { //if motorist not already in accident, mark them as in accident, set point value to 0, random crash sound, lose health
+            if (!motorist.isHitByPlayer()) {
+                motorist.setHitByPlayer(true);
                 motorist.setInAccident(true);
                 motorist.setPointValue(0);
-                playSound("sounds/crash" + Utils.randInt(0, 9) + ".wav");
                 health -= motorist.getDamageValue();
+                playSound("sounds/crash" + Utils.randInt(0, 9) + ".wav");
             }
 
             if (posY > motorist.getPosY() + motorist.getHeight() - speed) { //if motorist in front

@@ -12,6 +12,7 @@ public class Motorist extends Actor {
     private int pointValue; //points added to score when motorist clears screen vertically
     private int damageValue; //amount of damage motorist does to player upon initial collision
     private boolean inAccident; //boolean to flag as having been in an accident or not
+    private boolean hitByPlayer;
     private int[] roadBounds = {142, 768}; //left and right most lane boundaries with grass
     private int randomCarNumber; //the car graphic assigned to the motorist
 
@@ -135,18 +136,30 @@ public class Motorist extends Actor {
     public int getPointValue() {
         return pointValue;
     }
+
     public void setPointValue(int pointValue) {
         this.pointValue = pointValue;
     }
+
     public int getDamageValue() {
         return damageValue;
     }
+
     public boolean isInAccident() {
         return inAccident;
     }
 
+    public boolean isHitByPlayer() {
+        return hitByPlayer;
+    }
+
+    public void setHitByPlayer(boolean hitByPlayer) {
+        this.hitByPlayer = hitByPlayer;
+    }
+
     /**
      * When motorist is marked as have been in an accident, change graphic to broken car and play a random crash sound.
+     *
      * @param inAccident
      */
     public void setInAccident(boolean inAccident) {
