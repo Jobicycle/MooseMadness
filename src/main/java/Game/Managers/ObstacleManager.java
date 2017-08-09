@@ -38,7 +38,7 @@ public class ObstacleManager {
         maxObstacles = (int) sessionRunTime / 10 + 1; //limit max obstacles to how long Game session has been underway.
         int randObstacle = Utils.randInt(1, 3); //choose a random number to decide on which obstacle to spawn.
 
-        if (obstacles.size() < maxObstacles && sessionRunTime > 2) { //if under obstacle limit and 2 seconds have passed since start of Game.
+        if (obstacles.size() < maxObstacles && sessionRunTime >= 2) { //if under obstacle limit and 2 seconds have passed since start of Game.
             if (randObstacle == 1) { //if rand 1 (33%), create a moose with random positioning and speeds.
                 Moose moose = new Moose(stage);
                 moose.setPosX(Utils.randInt(0, stage.getWidth()) - moose.getWidth());

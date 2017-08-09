@@ -50,8 +50,8 @@ public class Player extends Actor implements KeyboardControllable {
 
         topSpeed = 5f;
         acceleration = 0.04f;
-        handling = 0.1f;
-        maxHandling = 5f;
+        handling = 0.12f;
+        maxHandling = 4f;
         eBrakePower = 0.1f;
 
         up = down = left = right = eBrake = activateHorn = false;
