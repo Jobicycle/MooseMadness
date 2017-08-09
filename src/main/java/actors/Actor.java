@@ -1,13 +1,13 @@
 package actors;
 
-import game.ResourceLoader;
-import game.Stage;
+import Game.ResourceLoader;
+import Game.Stage;
 
 import java.awt.*;
 
 
 /**
- * Base class for all game actors
+ * Base class for all Game actors
  */
 public class Actor {
     private static final int POINT_VALUE = 0;

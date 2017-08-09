@@ -2,8 +2,8 @@ package actors.Obstacles;
 
 import actors.Actor;
 import actors.Player;
-import game.Stage;
-import game.Utils;
+import Game.Stage;
+import Game.Utils;
 
 /**
  *
@@ -45,6 +45,10 @@ public class Motorist extends Actor {
         //if in accident, slow car to a stop
         if (inAccident && vy < 0) vy += Utils.randFloat(0.008f, 0.01f);
         if (vy < 0 && vy > -0.5f) vy = 0;
+
+        //limit vx to a given range
+        if (vx > 3) vx = 3f;
+        else if (vx < -3) vx = -3f;
 
         //if not in accident, slowly stop veering
         if (!inAccident && vx != 0) {

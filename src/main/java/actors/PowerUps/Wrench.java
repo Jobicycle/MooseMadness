@@ -1,7 +1,7 @@
 package actors.PowerUps;
 
 import actors.Actor;
-import game.Stage;
+import Game.Stage;
 
 /**
  * Wrench class. A powerup that the player picks up in order to regain some health.

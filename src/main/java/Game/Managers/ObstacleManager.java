@@ -1,5 +1,7 @@
-package game;
+package Game.Managers;
 
+import Game.Stage;
+import Game.Utils;
 import actors.Actor;
 import actors.Obstacles.Moose;
 import actors.Obstacles.Pothole;
@@ -28,15 +30,15 @@ public class ObstacleManager {
     /**
      * randomObstacle function decides if a moose or pothole should be created. Obstacles can spawn 2 seconds after
      * start and beyond. Number of obstacles is increased every 15 seconds starting with 1 and going onward until the
-     * game ends. Obstacle ratio is typically 1:3 of moose:potholes.
+     * Game ends. Obstacle ratio is typically 1:3 of moose:potholes.
      *
      * @param sessionRunTime
      */
     public void randomObstacle(float sessionRunTime) {
-        maxObstacles = (int) sessionRunTime / 10 + 1; //limit max obstacles to how long game session has been underway.
+        maxObstacles = (int) sessionRunTime / 10 + 1; //limit max obstacles to how long Game session has been underway.
         int randObstacle = Utils.randInt(1, 3); //choose a random number to decide on which obstacle to spawn.
 
-        if (obstacles.size() < maxObstacles && sessionRunTime > 2) { //if under obstacle limit and 2 seconds have passed since start of game.
+        if (obstacles.size() < maxObstacles && sessionRunTime > 2) { //if under obstacle limit and 2 seconds have passed since start of Game.
             if (randObstacle == 1) { //if rand 1 (33%), create a moose with random positioning and speeds.
                 Moose moose = new Moose(stage);
                 moose.setPosX(Utils.randInt(0, stage.getWidth()) - moose.getWidth());
@@ -53,7 +55,7 @@ public class ObstacleManager {
                 moose.setVy(Utils.randFloat(0f, 2f));
                 obstacles.add(moose);
 
-            } else if (randObstacle > 1) { //if not 1 (66%) create a pothole with random positioning within bounds of road.
+            } else { //if not 1 (66%) create a pothole with random positioning within bounds of road.
                 Actor pothole = new Pothole(stage);
                 pothole.setPosX(Utils.randInt(142 + pothole.getWidth(), 768 - pothole.getWidth()));
                 pothole.setPosY(-pothole.getHeight());

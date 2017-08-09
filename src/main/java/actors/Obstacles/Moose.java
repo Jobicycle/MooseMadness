@@ -1,8 +1,8 @@
 package actors.Obstacles;
 
 import actors.Actor;
-import game.Stage;
-import game.Utils;
+import Game.Stage;
+import Game.Utils;
 
 /**
  * Moose actor. Acts as an obstacle that the player must try to avoid.

@@ -1,5 +1,7 @@
-package game;
+package Game.Managers;
 
+import Game.Stage;
+import Game.Utils;
 import actors.Actor;
 import actors.Obstacles.Motorist;
 
@@ -7,7 +9,7 @@ import java.util.List;
 
 /**
  * TrafficManager class handles when and where to spawn other motorists.
- * Spawn rates increase as the game session goes on.
+ * Spawn rates increase as the Game session goes on.
  */
 public class TrafficManager {
     private Stage stage;
@@ -28,7 +30,7 @@ public class TrafficManager {
 
     /**
      * randomMotorist method is used to decide if it is time to create another motorist actor and add them to the list.
-     * Number of motorists are set to 1 after 1 second of game play and increase by 1 every 15 seconds. A motorist may
+     * Number of motorists are set to 1 after 1 second of Game play and increase by 1 every 15 seconds. A motorist may
      * either be speeding or normal. Speeding motorists are spawned below the player and normal above.
      * A safeSpawn utility is used in order to prevent motorists from being spawned on top of one another.
      *
@@ -37,7 +39,7 @@ public class TrafficManager {
     public void randomMotorist(float sessionRunTime) {
         maxMotorists = (int) sessionRunTime / 10 + 1; //limit motorists to 1 then +1 every 15 seconds.
 
-        if (motorists.size() < maxMotorists && sessionRunTime > 1) { //if not at max motorists and past 1 sec game play.
+        if (motorists.size() < maxMotorists && sessionRunTime > 1) { //if not at max motorists and past 1 sec Game play.
             Motorist motorist = new Motorist(stage);
             int lane;
 

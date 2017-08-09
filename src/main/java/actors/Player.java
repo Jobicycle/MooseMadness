@@ -5,8 +5,8 @@ import actors.Obstacles.Motorist;
 import actors.Obstacles.Pothole;
 import actors.PowerUps.AirHorn;
 import actors.PowerUps.Wrench;
-import game.Stage;
-import game.Utils;
+import Game.Stage;
+import Game.Utils;
 
 import java.awt.event.KeyEvent;
 
@@ -50,7 +50,7 @@ public class Player extends Actor implements KeyboardControllable {
 
         topSpeed = 5f;
         acceleration = 0.04f;
-        handling = 0.15f;
+        handling = 0.1f;
         maxHandling = 5f;
         eBrakePower = 0.1f;
 

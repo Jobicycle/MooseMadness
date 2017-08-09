@@ -1,9 +1,8 @@
 package actors.Obstacles;
 
 import actors.Actor;
-import actors.Player;
-import game.Stage;
-import game.Utils;
+import Game.Stage;
+import Game.Utils;
 
 /**
  * Pothole class. Potholes act as stationary obstacles that the player must try to avoid.

@@ -1,7 +1,7 @@
 package actors.PowerUps;
 
 import actors.Actor;
-import game.Stage;
+import Game.Stage;
 
 /**
  * Airhorn powerup class. Used by the player to temporarily move non stationary obstacles out of the way.

@@ -24,7 +24,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>game.MooseMadness</mainClass>
+                            <mainClass>Game.MooseMadness</mainClass>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>

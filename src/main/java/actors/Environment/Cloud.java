@@ -1,7 +1,7 @@
 package actors.Environment;
 
 import actors.Actor;
-import game.Stage;
+import Game.Stage;
 
 /**
  * Cloud class, acts as part of the environment reducing visibility for the player
