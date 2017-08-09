@@ -69,11 +69,11 @@ public class Player extends Actor implements KeyboardControllable {
             score -= 1;
         }
 
-        if (health <= 10) sprites[0] = "cars/pcar5.png";
-        else if (health <= 30) sprites[0] = "cars/pcar4.png";
-        else if (health <= 50) sprites[0] = "cars/pcar3.png";
-        else if (health <= 70) sprites[0] = "cars/pcar2.png";
-        else if (health <= 90) sprites[0] = "cars/pcar1.png";
+        if (health <= 20) sprites[0] = "cars/pcar5.png";
+        else if (health <= 40) sprites[0] = "cars/pcar4.png";
+        else if (health <= 60) sprites[0] = "cars/pcar3.png";
+        else if (health <= 80) sprites[0] = "cars/pcar2.png";
+        else if (health < 100) sprites[0] = "cars/pcar1.png";
     }
 
 

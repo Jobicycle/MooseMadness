@@ -53,7 +53,7 @@ public class Motorist extends Actor {
         }
 
         //remove car if it passes top or bottom of screen
-        if (posY > stage.getHeight() || posY + height < 0) {
+        if (posY > stage.getHeight() || posY + height < 0 - stage.getHeight() / 2) {
             setMarkedForRemoval(true);
         }
 

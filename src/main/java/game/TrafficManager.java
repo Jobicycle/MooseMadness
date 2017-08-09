@@ -17,6 +17,7 @@ public class TrafficManager {
 
     /**
      * TrafficManager constructor. Takes in stage and the motorists list.
+     *
      * @param stage
      * @param motorists
      */
@@ -30,6 +31,7 @@ public class TrafficManager {
      * Number of motorists are set to 1 after 1 second of game play and increase by 1 every 15 seconds. A motorist may
      * either be speeding or normal. Speeding motorists are spawned below the player and normal above.
      * A safeSpawn utility is used in order to prevent motorists from being spawned on top of one another.
+     *
      * @param sessionRunTime
      */
     public void randomMotorist(float sessionRunTime) {
@@ -41,7 +43,7 @@ public class TrafficManager {
 
             if (Utils.randInt(1, 2) == 1) { //create a non speeder
                 motorist.setVy(Utils.randFloat(-3, -1));
-                motorist.setPosY(0 - motorist.getHeight());
+                motorist.setPosY(0 - stage.getHeight() / 2);
             } else { //create a speeder
                 motorist.setVy(Utils.randFloat(-8, -6));
                 motorist.setPosY(stage.getHeight());

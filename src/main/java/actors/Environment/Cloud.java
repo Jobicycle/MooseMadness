@@ -14,7 +14,7 @@ public class Cloud extends Actor {
      */
     public Cloud(Stage canvas) {
         super(canvas);
-        sprites = new String[]{"road/cloud0.png"};
+        sprites = new String[]{"environment/cloud0.png"};
         width = 183;
         height = 140;
     }

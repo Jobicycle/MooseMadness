@@ -90,7 +90,7 @@ public class MooseMadness extends Stage implements KeyListener {
         player = new Player(this); //add player
 
         //load background
-        backgroundTile = ResourceLoader.getInstance().getSprite("road/road0.png");
+        backgroundTile = ResourceLoader.getInstance().getSprite("environment/road0.png");
         background = ResourceLoader.createCompatible(WIDTH, HEIGHT + backgroundTile.getHeight(), Transparency.OPAQUE);
         Graphics2D g = (Graphics2D) background.getGraphics();
         g.setPaint(new TexturePaint(backgroundTile, new Rectangle(0, 0, backgroundTile.getWidth(), backgroundTile.getHeight())));

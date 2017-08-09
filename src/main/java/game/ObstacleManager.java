@@ -38,14 +38,16 @@ public class ObstacleManager {
 
         if (obstacles.size() < maxObstacles && sessionRunTime > 2) { //if under obstacle limit and 2 seconds have passed since start of game.
             if (randObstacle == 1) { //if rand 1 (33%), create a moose with random positioning and speeds.
-                Actor moose = new Moose(stage);
+                Moose moose = new Moose(stage);
                 moose.setPosX(Utils.randInt(0, stage.getWidth()) - moose.getWidth());
                 moose.setPosY(-moose.getHeight());
 
                 if (moose.getPosX() + moose.getWidth() / 2 >= stage.getWidth() / 2) {
                     moose.setVx(Utils.randFloat(-2f, -1f));
+                    moose.setDirectionRight(false);
                 } else {
                     moose.setVx(Utils.randFloat(1f, 2f));
+                    moose.setDirectionRight(true);
                 }
 
                 moose.setVy(Utils.randFloat(0f, 2f));
