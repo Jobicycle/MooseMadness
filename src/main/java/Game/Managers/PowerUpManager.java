@@ -31,7 +31,7 @@ public class PowerUpManager {
      * @param sessionRunTime
      */
     public void randomWrench(float sessionRunTime) {
-        if (Utils.randInt(1, 750) == 1 && sessionRunTime >= 20) {
+        if (Utils.randInt(1, 750) == 1 && sessionRunTime >= 10) {
             Actor wrench = new Wrench(stage);
             wrench.setPosX(Utils.randInt(142 + wrench.getWidth(), 768 - wrench.getWidth()));
             wrench.setPosY(-wrench.getHeight());
@@ -45,7 +45,7 @@ public class PowerUpManager {
      * @param sessionRunTime
      */
     public void randomAirHorn(float sessionRunTime) {
-        if (Utils.randInt(1, 1500) == 1 && sessionRunTime >= 30) {
+        if (Utils.randInt(1, 750) == 1 && sessionRunTime >= 20) {
             Actor airHorn = new AirHorn(stage);
             airHorn.setPosX(Utils.randInt(142 + airHorn.getWidth(), 768 - airHorn.getWidth()));
             airHorn.setPosY(-airHorn.getHeight());

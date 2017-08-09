@@ -50,7 +50,8 @@ public class Player extends Actor implements KeyboardControllable {
 
         topSpeed = 5f;
         acceleration = 0.04f;
-        handling = 0.12f;
+
+        handling = 0.15f;
         maxHandling = 4f;
         eBrakePower = 0.1f;
 
@@ -115,7 +116,7 @@ public class Player extends Actor implements KeyboardControllable {
         if (posX + width / 2 <= roadBounds[0] || posX + width / 2 > roadBounds[1]) {
             offRoad = true;
             if (speed >= topSpeed / 2) speed -= 0.1;
-            if (speed > 0) {
+            if (speed > 1f) {
                 if (Utils.randInt(0, 1) == 1) posX += 2;
                 else posX -= 2;
             }
