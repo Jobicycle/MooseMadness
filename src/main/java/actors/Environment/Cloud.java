@@ -30,7 +30,7 @@ public class Cloud extends Actor {
         posX += vx;
         posY += vy;
 
-        if (posY >= stage.getHeight() || posX > stage.getWidth()) {
+        if (posY >= stage.getHeight() || posX > stage.getWidth() || posX + width < 0) {
             setMarkedForRemoval(true);
         }
     }

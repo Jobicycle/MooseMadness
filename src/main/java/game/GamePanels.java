@@ -45,7 +45,7 @@ public class GamePanels extends Stage {
         g.setColor(Color.green);
         g.drawString("Score: ", 20, 30);
         g.setColor(Color.white);
-        g.drawString("" + player.getScore(), 130, 30);
+        g.drawString("" + (int) player.getScore(), 130, 30);
     }
 
     /**
@@ -133,10 +133,10 @@ public class GamePanels extends Stage {
         xPos = getWIDTH() / 4 + 400;
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.setColor(Color.PINK);
-        g.drawString("" + player.getScore(), (xPos < 0 ? 0 : xPos), getHEIGHT() / 4 + 150);
+        g.drawString("" + (int) player.getScore(), (xPos < 0 ? 0 : xPos), getHEIGHT() / 4 + 150);
         xPos = getWIDTH()/4;
         //Displays highscores to user on game over screen
-        scoreManager = new ScoreManager(player.getScore());
+        scoreManager = new ScoreManager((int) player.getScore());
 
         try {
             url = getClass().getClassLoader().getResource("res/menus/highscores.png");
@@ -257,7 +257,7 @@ public class GamePanels extends Stage {
         g.drawImage(image, (xPos < 0 ? 0 : xPos), getHEIGHT() / 20, this);
         g.setFont(new Font("Arial", Font.BOLD, 20));
         g.setColor(Color.PINK);
-        scoreManager = new ScoreManager(player.getScore());
+        scoreManager = new ScoreManager((int)player.getScore());
         xPos += 200;
         if (scoreManager.topTenScores().size() >= 1) {
             g.drawString(String.valueOf(scoreManager.topTenScores().get(0)), (xPos < 0 ? 0 : xPos), getHEIGHT() / 20 +150);

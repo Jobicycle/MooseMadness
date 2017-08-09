@@ -18,7 +18,7 @@ public class Player extends Actor implements KeyboardControllable {
     private boolean up, down, left, right, eBrake, activateHorn; //booleans for different actions
     private int health = 100; //starting health
     private float speed = 4f; //max speed
-    private int score = 0; //starting score
+    private float score = 0; //starting score
     private int numberOfHorns = 0; //number of horn powerups
     private int[] roadBounds = {142, 768}; //coordinates of the left and right most grassy boundaries.
 
@@ -65,8 +65,13 @@ public class Player extends Actor implements KeyboardControllable {
         updateSpeed();
 
         // reduce score if driving on the sides
-        if (offRoad || speed < topSpeed / 2) {
-            score -= 1;
+        if (offRoad || speed <= topSpeed / 2) {
+            this.updateScore(-5);
+        }
+
+        // if at top speed, accumulate bonus points every frame.
+        if (speed >= topSpeed) {
+            this.updateScore(speed / 100);
         }
 
         if (health <= 20) sprites[0] = "cars/pcar5.png";
@@ -107,7 +112,7 @@ public class Player extends Actor implements KeyboardControllable {
         else if (vx > 0 && vx < handling || vx < 0 && vx > -handling) vx = 0;
 
         //limit car speed and randomly altar posX to simulate rough terrain
-        if (posX + width / 1.5 <= roadBounds[0] || posX + width / 1.5 > roadBounds[1]) {
+        if (posX + width / 2 <= roadBounds[0] || posX + width / 2 > roadBounds[1]) {
             offRoad = true;
             if (speed >= topSpeed / 2) speed -= 0.1;
             if (speed > 0) {
@@ -164,7 +169,7 @@ public class Player extends Actor implements KeyboardControllable {
                 break;
 
             case KeyEvent.VK_SPACE:
-                if (!eBrake) {
+                if (!eBrake && speed > 0) {
                     eBrake = true;
                     playSound("sounds/eBrake.wav");
                 }
@@ -214,9 +219,12 @@ public class Player extends Actor implements KeyboardControllable {
         //if hitting a wrench, collect it and increase health.
         if (a instanceof Wrench) {
             Wrench wrench = (Wrench) a;
-            health += wrench.getHealingValue();
-            if (health > 100) health = 100;
-            score += wrench.getPointValue();
+            if (health == 100) score += wrench.getPointValue();
+            else {
+                health += wrench.getHealingValue();
+                if (health > 100) health = 100;
+                wrench.setPointValue(0);
+            }
             wrench.setMarkedForRemoval(true);
             playSound("sounds/wrench.wav");
         }
@@ -224,8 +232,12 @@ public class Player extends Actor implements KeyboardControllable {
         //collect airhorn powerups. Max of 1. If player already has 1, collect points.
         if (a instanceof AirHorn) {
             AirHorn airHorn = (AirHorn) a;
-            if (numberOfHorns == 0) numberOfHorns = 1;
-            else if (numberOfHorns == 1) score += airHorn.getPointValue();
+            if (numberOfHorns == 1) score += airHorn.getPointValue();
+            else {
+                numberOfHorns = 1;
+                airHorn.setPointValue(0);
+            }
+
             airHorn.setMarkedForRemoval(true);
             playSound("sounds/hornpickup.wav");
         }
@@ -294,11 +306,19 @@ public class Player extends Actor implements KeyboardControllable {
         }
     }
 
-    public void updateScore(int score) {
-        this.score += score;
+    /**
+     * Score logic. If player is travelling at least 80% of max speed, they will be able to collect the points
+     * which are also multiplied by their current speed.
+     *
+     * @param score
+     */
+    public void updateScore(float score) {
+        if (speed >= topSpeed * 0.8) this.score += score * speed;
+        if (score < 0) this.score += score;
+        if (this.score <= 0) this.score = 0;
     }
 
-    public int getScore() {
+    public float getScore() {
         return score;
     }
 

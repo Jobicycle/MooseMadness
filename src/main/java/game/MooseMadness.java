@@ -203,7 +203,7 @@ public class MooseMadness extends Stage implements KeyListener {
             Utils.checkCollision(actor, actorList);
 
             if (actor.isMarkedForRemoval()) {
-                if (player.getSpeed() > player.getTopSpeed() / 2) player.updateScore(actor.getPointValue());
+                player.updateScore(actor.getPointValue());
                 actorList.remove(i);
             } else {
                 actor.setPosY(actor.getPosY() + (int) player.getSpeed());

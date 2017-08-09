@@ -7,7 +7,7 @@ import game.Stage;
  * Airhorn powerup class. Used by the player to temporarily move non stationary obstacles out of the way.
  */
 public class AirHorn extends Actor {
-    private int pointValue = 500;
+    private int pointValue = 1000;
 
     /**
      * Airhorn constructor
@@ -31,5 +31,9 @@ public class AirHorn extends Actor {
 
     public int getPointValue() {
         return pointValue;
+    }
+
+    public void setPointValue(int pointValue) {
+        this.pointValue = pointValue;
     }
 }
