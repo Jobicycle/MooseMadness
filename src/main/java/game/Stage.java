@@ -1,11 +1,7 @@
-package game;
-
-import actors.Actor;
+package Game;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Stage base class of which the MooseMadness class is based off of.

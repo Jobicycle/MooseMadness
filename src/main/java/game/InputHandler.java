@@ -1,4 +1,4 @@
-package game;
+package Game;
 
 import actors.Player;
 
@@ -27,7 +27,7 @@ public class InputHandler extends Thread {
             int keyPressed = event.getKeyCode();
 
             if (mooseMadness.state == Stage.GameState.GAMEOVER) { // if in gameover
-                if (KeyEvent.VK_ENTER == keyPressed) { // if enter start new game
+                if (KeyEvent.VK_ENTER == keyPressed) { // if enter start new Game
                     mooseMadness.state = Stage.GameState.GAME;
                     mooseMadness.initWorld();
                     mooseMadness.game();
@@ -37,7 +37,7 @@ public class InputHandler extends Thread {
                 }
 
             } else if (mooseMadness.state == Stage.GameState.MENU) { // if in menu
-                if (KeyEvent.VK_ENTER == keyPressed) { // if enter key pressed start new game
+                if (KeyEvent.VK_ENTER == keyPressed) { // if enter key pressed start new Game
                     mooseMadness.state = Stage.GameState.GAME;
                     mooseMadness.initWorld();
                     mooseMadness.game();

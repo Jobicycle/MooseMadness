@@ -1,5 +1,9 @@
-package game;
+package Game;
 
+import Game.Managers.CloudManager;
+import Game.Managers.ObstacleManager;
+import Game.Managers.PowerUpManager;
+import Game.Managers.TrafficManager;
 import actors.Actor;
 import actors.Obstacles.Moose;
 import actors.Obstacles.Motorist;
@@ -36,7 +40,7 @@ public class MooseMadness extends Stage implements KeyListener {
     private CloudManager cloudManager;
 
     /**
-     * Main game class
+     * Main Game class
      */
     public MooseMadness() {
         //init the UI
@@ -99,7 +103,7 @@ public class MooseMadness extends Stage implements KeyListener {
     }
 
     /**
-     * main game loop. Allows player to cycle through different screens or is forced to gameover screen when necessary.
+     * main Game loop. Allows player to cycle through different screens or is forced to gameover screen when necessary.
      */
     public void game() {
         Graphics g = strategy.getDrawGraphics();
@@ -126,7 +130,7 @@ public class MooseMadness extends Stage implements KeyListener {
             case GAME:
                 usedTime = 0;
 
-                //game over loop, updates actors, paints actors, tracks session run time, and calls calculate sleep time to keep frames at normal rate.
+                //Game over loop, updates actors, paints actors, tracks session run time, and calls calculate sleep time to keep frames at normal rate.
                 gameLoop:
                 while (isVisible()) {
                     gameUpdate();
@@ -134,10 +138,10 @@ public class MooseMadness extends Stage implements KeyListener {
                     sessionRunTime += 0.01;
                     Utils.calculateSleepTime(usedTime, DESIRED_FPS);
 
-                    if (state == GameState.GAMEOVER) { // break out of game loop, change state to game over, then re-enter game() method.
+                    if (state == GameState.GAMEOVER) { // break out of Game loop, change state to Game over, then re-enter Game() method.
                         game();
                         break gameLoop;
-                    } else if (state == GameState.PAUSE) { // break out of game loop, change state to pause, then re-enter game() method.
+                    } else if (state == GameState.PAUSE) { // break out of Game loop, change state to pause, then re-enter Game() method.
                         game();
                         break gameLoop;
                     }
@@ -147,7 +151,7 @@ public class MooseMadness extends Stage implements KeyListener {
     }
 
     /**
-     * gameUpdate method handles updating all the actors in the game, checking for collisions, and asking managers if actors should be created.
+     * gameUpdate method handles updating all the actors in the Game, checking for collisions, and asking managers if actors should be created.
      */
     private void gameUpdate() {
         //iterate through current obstacle list, check for collisions, remove unnecessary obstacles, update obstacle position based on player speed.
@@ -185,7 +189,7 @@ public class MooseMadness extends Stage implements KeyListener {
         trafficManager.randomMotorist(sessionRunTime);
         cloudManager.randomCloud(sessionRunTime);
 
-        if (player.getHealth() <= 0) { //if game over
+        if (player.getHealth() <= 0) { //if Game over
             state = GameState.GAMEOVER;
         }
     }

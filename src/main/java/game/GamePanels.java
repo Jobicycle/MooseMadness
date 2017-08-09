@@ -1,8 +1,7 @@
-package game;
+package Game;
 
+import Game.Managers.ScoreManager;
 import actors.Player;
-import game.ScoreManager;
-import game.Stage;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,8 +11,8 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Game Panels - Class for different States of the game and user interfaces.
- * Used for Printing score, printing menu, pause, and game over screen
+ * Game Panels - Class for different States of the Game and user interfaces.
+ * Used for Printing score, printing menu, pause, and Game over screen
  *
  */
 public class GamePanels extends Stage {
@@ -38,7 +37,7 @@ public class GamePanels extends Stage {
     }
 
     /**
-     * Print Score() - used to display score during game
+     * Print Score() - used to display score during Game
      */
     public void printScore() {
         g.setFont(new Font("Consolas", Font.PLAIN, 30));
@@ -49,7 +48,7 @@ public class GamePanels extends Stage {
     }
 
     /**
-     * printHealth() - used to print health during game
+     * printHealth() - used to print health during Game
      */
     public void printHealth() {
         g.setFont(new Font("Consolas", Font.PLAIN, 30));
@@ -60,7 +59,7 @@ public class GamePanels extends Stage {
     }
 
     /**
-     * PrintSpeed() - used to print speed during game
+     * PrintSpeed() - used to print speed during Game
      */
     public void printSpeed() {
         g.setFont(new Font("Consolas", Font.PLAIN, 20));
@@ -91,7 +90,7 @@ public class GamePanels extends Stage {
      * printGameOver() - Game over menu design
      */
     public void printGameOver() {
-        //color entire game panel black
+        //color entire Game panel black
         g.setColor(new Color(51, 0, 102));
         g.fillRect(0, 0, getWIDTH(), getHEIGHT());
 
@@ -135,7 +134,7 @@ public class GamePanels extends Stage {
         g.setColor(Color.PINK);
         g.drawString("" + (int) player.getScore(), (xPos < 0 ? 0 : xPos), getHEIGHT() / 4 + 150);
         xPos = getWIDTH()/4;
-        //Displays highscores to user on game over screen
+        //Displays highscores to user on Game over screen
         scoreManager = new ScoreManager((int) player.getScore());
 
         try {
@@ -167,7 +166,7 @@ public class GamePanels extends Stage {
      * printMainMenu() - Main Menu Design
      */
     public void printMainMenu() {
-        //color entire game panel black
+        //color entire Game panel black
         g.setColor(new Color(51, 0, 102));
         g.fillRect(0, 0, getWIDTH(), getHEIGHT());
         URL url = null;
@@ -206,7 +205,7 @@ public class GamePanels extends Stage {
      * printPause() - Pause Menu design
      */
     public void printPause() {
-        //color entire game panel black
+        //color entire Game panel black
         g.setColor(new Color(51, 0, 102));
         g.fillRect(0, 0, getWIDTH(), getHEIGHT());
         URL url = null;

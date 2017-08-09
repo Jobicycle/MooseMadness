@@ -1,4 +1,4 @@
-package game;
+package Game;
 
 import javax.imageio.ImageIO;
 import java.applet.Applet;
